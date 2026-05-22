@@ -21,7 +21,10 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Broadleaf_Green
-  m_Shader: {fileID: -6465566751694194690, guid: 3230f6c5d09dd114c82b2287fcc7e15b, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 3230f6c5d09dd114c82b2287fcc7e15b,
+    type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - _ALPHATEST_ON
   - _COLOR_OVERLAY_UV
@@ -32,12 +35,13 @@ Material:
   - _OVERLAY_VERTEX_POSITION
   - _WIND_OVERLAY_UV
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 1
   m_CustomRenderQueue: 2450
   stringTagMap:
     RenderType: TransparentCutout
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -115,7 +119,7 @@ Material:
     - _Blend: 0
     - _BlendHeight: 1.29
     - _BlendModePreserveSpecular: 0
-    - _Blend_Height: 0.13
+    - _Blend_Height: 0.126
     - _BumpScale: 1
     - _CAST_SHADOWS: 0
     - _CAST_SHADOWS_OFF: 0
@@ -163,7 +167,7 @@ Material:
     - _WindSpeed: 2
     - _WindStrength: 1
     - _Wind_Direction: 0
-    - _Wind_Speed: 0.14
+    - _Wind_Speed: 0.171
     - _Wind_Strength: 0.25
     - _Wind_Variation: 1
     - _WorkflowMode: 0
@@ -173,13 +177,13 @@ Material:
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _BottomColor: {r: 0.51857907, g: 0.5377358, b: 0.0025364957, a: 0}
-    - _Bottom_Color: {r: 0.6182256, g: 0.754717, b: 0, a: 0}
+    - _Bottom_Color: {r: 0.24705884, g: 0.27450982, b: 0.121568635, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Player_Position: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
     - _TopColor: {r: 0.58158517, g: 0.754717, b: 0, a: 0}
-    - _Top_Color: {r: 0.668223, g: 0.8, b: 0, a: 0}
+    - _Top_Color: {r: 0.6500042, g: 0.745283, b: 0.21444462, a: 0}
     - _WindDirection: {r: 0.1, g: 0.1, b: 0, a: 0}
     - _Wind_Direction: {r: 0.1, g: 0.1, b: 0, a: 0}
   m_BuildTextureStacks: []
