@@ -73,6 +73,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: e9be9bd34a4f26c4d8aa7187b6d9c92e,
+        type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: e9be9bd34a4f26c4d8aa7187b6d9c92e,
         type: 3}
       propertyPath: m_Name
@@ -121,7 +126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 3
   outlineColor: {r: 0.9622642, g: 0.09531862, b: 0.09531862, a: 1}
-  outlineWidth: 0.0008
+  outlineWidth: 0.0016
 --- !u!65 &2164156415211155345
 BoxCollider:
   m_ObjectHideFlags: 0
