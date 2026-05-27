@@ -126,7 +126,7 @@ Material:
     - _CastShadows: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
-    - _Contrast: 0.55
+    - _Contrast: 0.571
     - _Coverage_Map_Scale: 10
     - _Coverage_Mask_Scale: 2.5
     - _Coverage_Normal_Strength: 1
@@ -138,13 +138,13 @@ Material:
     - _DstBlend: 0
     - _ENABLE_COVERAGE: 1
     - _EnvironmentReflections: 1
-    - _Fade: 0.38
+    - _Fade: -0.392
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _Level: 0
     - _Metallic: 0
-    - _Normal_Strength: 1
+    - _Normal_Strength: 0.341
     - _OVERLAY: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.005
@@ -162,7 +162,7 @@ Material:
     - _ZWriteControl: 0
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0.754717, g: 0.7352475, b: 0.66571736, a: 1}
+    - _Color: {r: 0.6603774, g: 0.6603774, b: 0.6603774, a: 1}
     - _Coverage_Color: {r: 0.6106299, g: 0.7169812, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}

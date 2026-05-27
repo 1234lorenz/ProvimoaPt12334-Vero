@@ -110,7 +110,7 @@ Material:
     - _AlphaClip: 1
     - _AlphaCutoff: 0.5
     - _AlphaToMask: 1
-    - _Alpha_Cutoff: 0.5
+    - _Alpha_Cutoff: 0.134
     - _BEND_WIND_OVERLAY: 0
     - _BOOLEAN_1: 0
     - _Bend: 0
@@ -118,7 +118,7 @@ Material:
     - _Blend: 0
     - _BlendHeight: 1.29
     - _BlendModePreserveSpecular: 0
-    - _Blend_Height: 0.304
+    - _Blend_Height: 0.388
     - _BumpScale: 1
     - _CAST_SHADOWS: 0
     - _CAST_SHADOWS_OFF: 0
