@@ -126,7 +126,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 3
   outlineColor: {r: 0.9622642, g: 0.09531862, b: 0.09531862, a: 1}
-  outlineWidth: 0.0024
+  outlineWidth: 1.4
 --- !u!65 &2164156415211155345
 BoxCollider:
   m_ObjectHideFlags: 0
