@@ -27,7 +27,7 @@ public class CounterMenagerRifiuti : MonoBehaviour
 
     private Coroutine messageCoroutine; // tiene traccia della coroutine attiva
 
-    public bool AddTrash(RIFIUTIType type)
+    public bool AddTrash(RIFIUTIType type, int quantity = 1)
     {
         foreach (var slot in slots)
         {
@@ -40,7 +40,7 @@ public class CounterMenagerRifiuti : MonoBehaviour
                     return false;
                 }
 
-                slot.currentCount++;//incremento 
+                slot.currentCount += quantity;
                 slot.countText.text = $"{slot.currentCount}/{slot.maxCount}";//aggiornamento grafica del count 
                 return true;
             }

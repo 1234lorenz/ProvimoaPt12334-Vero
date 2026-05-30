@@ -177,9 +177,9 @@ public class Collector : MonoBehaviour
 
     private void Collect(RIFIUTI item)
     {
-        
+
         // se inventario pieno non raccogliere
-        bool added = counterRifiuti.AddTrash(item.type);
+        bool added = counterRifiuti.AddTrash(item.type, item.quantita);
         if (!added) return;
 
         item.SetOutline(false);

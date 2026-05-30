@@ -8,6 +8,10 @@ public class RIFIUTI : MonoBehaviour
     public Color outlineColor = Color.cyan;
     [Range(0f, 10f)] public float outlineWidth = 5f;
 
+    [Header("Quantità")]
+    public int quantita = 1; // default 1, per i mucchi mettiamo 5 o 10[Header("Quantità")]
+
+
     private Outline outline;
 
     void Awake()
