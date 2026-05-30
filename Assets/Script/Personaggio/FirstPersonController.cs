@@ -51,10 +51,13 @@ public class FirstPersonController : Personaggio
     void Awake()
     {
         volume.profile.TryGet<Vignette>(out effetti_danno);
+       
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        mouseSesitivity = PlayerPrefs.GetFloat("Sensibilita", 0.1f);
         original_difesa = Defense;
         original_value = effetti_danno.color.value;
+
 
 
     }
