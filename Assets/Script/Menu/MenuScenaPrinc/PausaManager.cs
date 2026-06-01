@@ -1,12 +1,18 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PausaManager : MonoBehaviour
 {
-    [Header("UI")]
+    [Header("UI Pausa")]
     public GameObject pausaPanel;
     public GameObject opzioniPausaPanel;
+
+    [Header("Slider Opzioni Pausa")]
+    public Slider sliderMusicaPausa;
+    public Slider sliderEffettiPausa;
+    public Slider sliderSensibilitaPausa;
 
     private bool isPaused = false;
     private PlayerInputHandler inputHandler;
@@ -17,11 +23,12 @@ public class PausaManager : MonoBehaviour
         inputHandler = FindObjectOfType<PlayerInputHandler>();
         playerController = FindObjectOfType<FirstPersonController>();
         pausaPanel.SetActive(false);
+        if (opzioniPausaPanel != null)
+            opzioniPausaPanel.SetActive(false);
     }
 
     void Update()
     {
-        // premi ESC per aprire/chiudere la pausa
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (isPaused) Riprendi();
@@ -43,15 +50,26 @@ public class PausaManager : MonoBehaviour
     {
         isPaused = false;
         pausaPanel.SetActive(false);
+        if (opzioniPausaPanel != null)
+            opzioniPausaPanel.SetActive(false);
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         playerController.enabled = true;
     }
+
     public void ApriOpzioni()
     {
         pausaPanel.SetActive(false);
         opzioniPausaPanel.SetActive(true);
+
+        // carica i valori salvati sugli slider
+        if (sliderMusicaPausa != null)
+            sliderMusicaPausa.value = PlayerPrefs.GetFloat("VolMusica", 0.75f);
+        if (sliderEffettiPausa != null)
+            sliderEffettiPausa.value = PlayerPrefs.GetFloat("VolEffetti", 0.75f);
+        if (sliderSensibilitaPausa != null)
+            sliderSensibilitaPausa.value = PlayerPrefs.GetFloat("Sensibilita", 0.1f);
     }
 
     public void IndietroOpzioni()
@@ -59,6 +77,7 @@ public class PausaManager : MonoBehaviour
         pausaPanel.SetActive(true);
         opzioniPausaPanel.SetActive(false);
     }
+
     public void EsciAlMenu()
     {
         Time.timeScale = 1f;
