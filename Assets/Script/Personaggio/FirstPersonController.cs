@@ -24,7 +24,7 @@ public class FirstPersonController : Personaggio
     [SerializeField] private float grevityMultipler = 1.0f;
 
     [Header("Look Parameters")]
-    [SerializeField] private float mouseSesitivity = 0.1f;
+    public float mouseSesitivity = 0.1f;//lo resa pub per opzionimanager senno era con il serializefield 
     [SerializeField] private float upDownLookRange = 80f;
 
     [Header("Reference")]

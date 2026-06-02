@@ -57,6 +57,11 @@ public class OpzioniManager : MonoBehaviour
         PlayerPrefs.SetFloat("Sensibilita", value);
         if (testoSensibilita != null)
             testoSensibilita.text = Mathf.RoundToInt(value * 100) + "%";
+
+        // applica subito al FirstPersonController
+        FirstPersonController fpc = FindObjectOfType<FirstPersonController>();
+        if (fpc != null)
+            fpc.mouseSesitivity = value;
     }
 
     void OnApplicationQuit()

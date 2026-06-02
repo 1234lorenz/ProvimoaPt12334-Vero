@@ -9,9 +9,12 @@ public class MenuManager : MonoBehaviour
     public GameObject pannelloOpzioni;   // pannello opzioni
     public GameObject pannelloCrediti;   // pannello crediti
 
+    private FadeManager fadeManager;
     void Start()
     {
         // mostra solo il menu principale all'avvio
+        fadeManager = FindObjectOfType<FadeManager>();
+
         pannelloMenu.SetActive(true);
         pannelloOpzioni.SetActive(false);
         pannelloCrediti.SetActive(false);
@@ -21,7 +24,7 @@ public class MenuManager : MonoBehaviour
     public void Gioca()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("SampleScene");
+        fadeManager.FadeToScene("SampleScene");
     }
 
     // collegato al bottone OPZIONI

@@ -17,11 +17,13 @@ public class PausaManager : MonoBehaviour
     private bool isPaused = false;
     private PlayerInputHandler inputHandler;
     private FirstPersonController playerController;
+    private FadeManager fadeManager;
 
     void Start()
     {
         inputHandler = FindObjectOfType<PlayerInputHandler>();
         playerController = FindObjectOfType<FirstPersonController>();
+        fadeManager = FindObjectOfType<FadeManager>();
         pausaPanel.SetActive(false);
         if (opzioniPausaPanel != null)
             opzioniPausaPanel.SetActive(false);
@@ -63,7 +65,6 @@ public class PausaManager : MonoBehaviour
         pausaPanel.SetActive(false);
         opzioniPausaPanel.SetActive(true);
 
-        // carica i valori salvati sugli slider
         if (sliderMusicaPausa != null)
             sliderMusicaPausa.value = PlayerPrefs.GetFloat("VolMusica", 0.75f);
         if (sliderEffettiPausa != null)
@@ -81,6 +82,9 @@ public class PausaManager : MonoBehaviour
     public void EsciAlMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("MenuPrincipale");
+        if (fadeManager != null)
+            fadeManager.FadeToScene("MenuPrincipale");
+        else
+            SceneManager.LoadScene("MenuPrincipale");
     }
 }

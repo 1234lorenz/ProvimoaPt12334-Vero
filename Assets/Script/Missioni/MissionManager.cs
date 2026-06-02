@@ -35,11 +35,11 @@ public class MissionManager : MonoBehaviour
     public int xpBonusCestino = 60;
 
     // traccia missioni già completate per non dare bonus due volte
-    private bool plasticaCompleta = false;
-    private bool organicoCompleto = false;
-    private bool cartaCompleta = false;
-    private bool vetroCompleto = false;
-    private bool metalloCompleto = false;
+    public bool plasticaCompleta = false;
+    public bool organicoCompleto = false;
+    public bool cartaCompleta = false;
+    public bool vetroCompleto = false;
+    public bool metalloCompleto = false;
 
     [Header("UI Missioni")]
     public TextMeshProUGUI missionText;
