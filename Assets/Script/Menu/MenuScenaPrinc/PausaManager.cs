@@ -13,6 +13,7 @@ public class PausaManager : MonoBehaviour
     public Slider sliderMusicaPausa;
     public Slider sliderEffettiPausa;
     public Slider sliderSensibilitaPausa;
+    public SalvataggioUI salvataggioUI;
 
     private bool isPaused = false;
     private PlayerInputHandler inputHandler;
@@ -71,6 +72,12 @@ public class PausaManager : MonoBehaviour
             sliderEffettiPausa.value = PlayerPrefs.GetFloat("VolEffetti", 0.75f);
         if (sliderSensibilitaPausa != null)
             sliderSensibilitaPausa.value = PlayerPrefs.GetFloat("Sensibilita", 0.1f);
+    }
+
+    public void ApriSalvataggio()
+    {
+        pausaPanel.SetActive(false);
+        salvataggioUI.ApriSalvataggio();
     }
 
     public void IndietroOpzioni()
