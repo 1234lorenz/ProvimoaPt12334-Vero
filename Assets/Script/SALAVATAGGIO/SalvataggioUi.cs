@@ -34,8 +34,10 @@ public class SalvataggioUI : MonoBehaviour
             int slotIndex = i + 1;
             GameObject slotObj = Instantiate(slotPrefab, slotContainer);
 
+
             // testo dello slot
             var testo = slotObj.GetComponentInChildren<TextMeshProUGUI>();
+            Debug.Log("Testo trovato: " + testo); //  aggiungi questa
 
             if (SaveManager.Instance.SlotOccupato(slotIndex))
             {

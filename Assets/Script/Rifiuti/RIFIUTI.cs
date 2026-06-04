@@ -30,4 +30,4 @@ public class RIFIUTI : MonoBehaviour
     }
 }
 
-public enum RIFIUTIType { Plastica, Metallo, Carta, Vetro, Organico }
+public enum RIFIUTIType { Plastica, Metallo, Carta, Vetro, Organico,Secco }

@@ -8,10 +8,15 @@ public class SaveManager : MonoBehaviour
 
     private string savePath;
     private const int NUM_SLOTS = 6;
+    public int slotDaCaricare = -1;
 
     void Awake()
     {
-        if (Instance == null) Instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
         else Destroy(gameObject);
 
         savePath = Application.persistentDataPath + "/save";

@@ -86,6 +86,11 @@ public class PausaManager : MonoBehaviour
         opzioniPausaPanel.SetActive(false);
     }
 
+    public void ChiudiSalvataggio()
+    {
+        salvataggioUI.ChiudiSalvataggio();
+        pausaPanel.SetActive(true);
+    }
     public void EsciAlMenu()
     {
         Time.timeScale = 1f;
