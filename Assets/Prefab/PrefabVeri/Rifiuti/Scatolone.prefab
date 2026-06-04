@@ -146,6 +146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
+  rifiutoID: Scatolone
+  quantita: 1
   outlineColor: {r: 0.026032403, g: 0.028301895, b: 0.027912114, a: 1}
   outlineWidth: 10
-  quantita: 1

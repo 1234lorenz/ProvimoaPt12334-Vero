@@ -131,6 +131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
+  rifiutoID: BottigliaPlastica
+  quantita: 1
   outlineColor: {r: 0.9150943, g: 0.74366784, b: 0.047481313, a: 1}
   outlineWidth: 10
-  quantita: 1

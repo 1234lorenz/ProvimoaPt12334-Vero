@@ -1,9 +1,14 @@
 fileFormatVersion: 2
-guid: 138302f285c77c549acea0fc807f2bb3
+guid: cbb1daf2d83b80646a60f269afa6373b
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: bottigliarotta
+    second: {fileID: 2100000, guid: 05c2ed19eb4d3614ea79dae2886e9497, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -32,7 +37,7 @@ ModelImporter:
     extraExposedTransformPaths: []
     extraUserProperties: []
     clipAnimations: []
-    isReadable: 0
+    isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: 1

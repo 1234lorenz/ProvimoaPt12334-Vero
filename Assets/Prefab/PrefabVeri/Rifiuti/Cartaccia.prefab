@@ -146,6 +146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 2
+  rifiutoID: Cartaccia
+  quantita: 1
   outlineColor: {r: 0.047169805, g: 0.04659821, b: 0.046502307, a: 1}
   outlineWidth: 10
-  quantita: 1

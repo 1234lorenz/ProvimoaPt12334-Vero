@@ -131,6 +131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
+  rifiutoID: mucchioCarta
+  quantita: 5
   outlineColor: {r: 0.01860091, g: 0.01886791, b: 0.01886791, a: 1}
   outlineWidth: 5
-  quantita: 5

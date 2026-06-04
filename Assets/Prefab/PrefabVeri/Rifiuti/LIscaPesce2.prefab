@@ -110,9 +110,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 4
+  rifiutoID: lisca2
+  quantita: 1
   outlineColor: {r: 1, g: 0.21458334, b: 0, a: 1}
   outlineWidth: 10
-  quantita: 1
 --- !u!65 &6174012401425549985
 BoxCollider:
   m_ObjectHideFlags: 0

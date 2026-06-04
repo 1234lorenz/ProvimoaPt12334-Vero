@@ -146,6 +146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 5
+  rifiutoID: MuchhioSecco
+  quantita: 5
   outlineColor: {r: 0.084549636, g: 0.09317762, b: 0.9433962, a: 1}
   outlineWidth: 10
-  quantita: 5

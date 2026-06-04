@@ -180,9 +180,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 5
+  rifiutoID: sigaretta1
+  quantita: 1
   outlineColor: {r: 0, g: 0.21038413, b: 1, a: 1}
   outlineWidth: 10
-  quantita: 1
 --- !u!1 &6744467507850320476 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2601474404979352964, guid: 55866a5a804346b48a2574f40e0eb8aa,
@@ -202,9 +203,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 5
+  rifiutoID: sigaretta2
+  quantita: 1
   outlineColor: {r: 0, g: 0.1901753, b: 1, a: 1}
   outlineWidth: 10
-  quantita: 1
 --- !u!65 &8086595445464464639
 BoxCollider:
   m_ObjectHideFlags: 0

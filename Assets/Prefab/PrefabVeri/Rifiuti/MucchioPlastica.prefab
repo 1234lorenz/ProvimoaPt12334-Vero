@@ -131,6 +131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
+  rifiutoID: MUcchioPlastica
+  quantita: 5
   outlineColor: {r: 1, g: 0.3529681, b: 0, a: 1}
   outlineWidth: 7.64
-  quantita: 5

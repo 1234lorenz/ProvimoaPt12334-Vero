@@ -4,23 +4,24 @@ public class RIFIUTI : MonoBehaviour
 {
     public RIFIUTIType type;
 
+    [Header("ID Univoco")]
+    public string rifiutoID; // imposta dall'Inspector su ogni rifiuto
+
+    [Header("Quantità")]
+    public int quantita = 1;
+
     [Header("Outline")]
     public Color outlineColor = Color.cyan;
     [Range(0f, 10f)] public float outlineWidth = 5f;
-
-    [Header("Quantità")]
-    public int quantita = 1; // default 1, per i mucchi mettiamo 5 o 10[Header("Quantità")]
-
 
     private Outline outline;
 
     void Awake()
     {
-        // aggiunge il componente Outline automaticamente
         outline = gameObject.AddComponent<Outline>();
         outline.OutlineColor = outlineColor;
         outline.OutlineWidth = outlineWidth;
-        outline.enabled = false; // disattivato all'inizio
+        outline.enabled = false;
     }
 
     public void SetOutline(bool active)

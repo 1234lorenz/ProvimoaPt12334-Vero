@@ -125,6 +125,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 3
+  rifiutoID: BottigliaDivetro
+  quantita: 1
   outlineColor: {r: 0.9622642, g: 0.09531862, b: 0.09531862, a: 1}
   outlineWidth: 1.4
 --- !u!65 &2164156415211155345

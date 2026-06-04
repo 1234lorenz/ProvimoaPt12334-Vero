@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Collections.Generic; // Necessario per gestire le liste dello zaino
 
 public class SaveManager : MonoBehaviour
 {
@@ -44,6 +45,10 @@ public class SaveManager : MonoBehaviour
         data.metalloCompleto = MissionManager.Instance.metalloCompleto;
         data.cestiniSmaltiti = MissionManager.Instance.cestiniSmaltiti;
 
+        // Rifiuti raccolti (rimossi dal mondo)
+        data.rifiutiRaccolti = RifiutiManager.Instance.GetRifiutiRaccolti();
+        Debug.Log("Rifiuti raccolti salvati: " + data.rifiutiRaccolti.Count);
+
         // Posizione player
         GameObject player = GameObject.FindWithTag("Player");
         if (player != null)
@@ -53,11 +58,22 @@ public class SaveManager : MonoBehaviour
             data.playerZ = player.transform.position.z;
         }
 
-        // Info slot
+        //  NUOVO: Salva lo stato attuale degli oggetti dentro lo zaino
+        CounterMenagerRifiuti counter = FindObjectOfType<CounterMenagerRifiuti>();
+        if (counter != null)
+        {
+            data.quantitaZaino = new List<int>();
+            foreach (var slotRifiuto in counter.slots)
+            {
+                data.quantitaZaino.Add(slotRifiuto.currentCount);
+            }
+        }
+
+        // Info dello slot
         data.dataOra = System.DateTime.Now.ToString("dd/MM/yyyy HH:mm");
         data.slotOccupato = true;
 
-        // salva su file
+        // Scrittura effettiva del file
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(savePath + slot + ".dat");
         bf.Serialize(file, data);
@@ -94,10 +110,32 @@ public class SaveManager : MonoBehaviour
         MissionManager.Instance.metalloCompleto = data.metalloCompleto;
         MissionManager.Instance.cestiniSmaltiti = data.cestiniSmaltiti;
 
-        // applica posizione player
+        // MODIFICATO: Sposta il player disattivando temporaneamente il Character Controller
         GameObject player = GameObject.FindWithTag("Player");
         if (player != null)
+        {
+            CharacterController cc = player.GetComponent<CharacterController>();
+            if (cc != null) cc.enabled = false; // Spegne la fisica del movimento
+
             player.transform.position = new Vector3(data.playerX, data.playerY, data.playerZ);
+
+            if (cc != null) cc.enabled = true; // Riaccende la fisica
+        }
+
+        // NUOVO: Ripristina i rifiuti che avevi dentro lo zaino e aggiorna la grafica UI
+        CounterMenagerRifiuti counter = FindObjectOfType<CounterMenagerRifiuti>();
+        if (counter != null && data.quantitaZaino != null)
+        {
+            for (int i = 0; i < counter.slots.Length && i < data.quantitaZaino.Count; i++)
+            {
+                counter.slots[i].currentCount = data.quantitaZaino[i];
+            }
+            counter.AggiornaTuttoUI();
+        }
+
+        // Applica la scomparsa dei vecchi rifiuti dal mondo di gioco
+        Debug.Log("Rifiuti raccolti caricati: " + data.rifiutiRaccolti.Count);
+        RifiutiManager.Instance.ApplicaRifiutiRaccolti(data.rifiutiRaccolti);
 
         Debug.Log($"Caricato slot {slot}!");
     }
@@ -113,13 +151,13 @@ public class SaveManager : MonoBehaviour
         }
     }
 
-    // controlla se slot è occupato
+    // controlla se lo slot contiene file
     public bool SlotOccupato(int slot)
     {
         return File.Exists(savePath + slot + ".dat");
     }
 
-    // legge i dati di uno slot senza caricarli
+    // legge i dati di uno slot senza caricarli (serve per mostrare le info nel menù)
     public SaveData LeggiSlot(int slot)
     {
         string path = savePath + slot + ".dat";

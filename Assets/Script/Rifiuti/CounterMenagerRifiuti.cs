@@ -72,6 +72,11 @@ public class CounterMenagerRifiuti : MonoBehaviour
         messageCoroutine = null;
 
     }
+    public void AggiornaTuttoUI()
+    {
+        foreach (var slot in slots)
+            slot.countText.text = $"{slot.currentCount}/{slot.maxCount}";
+    }
 
     public void RemoveTrash(RIFIUTIType type, int quantity)//questa funzione serv a svuotare l'inventario
     {

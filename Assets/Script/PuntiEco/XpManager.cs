@@ -42,7 +42,10 @@ public class XPManager : MonoBehaviour
         UpdateUI();
         levelUpPanel.SetActive(false);
     }
-
+    public void AggiornaUI()
+    {
+        UpdateUI();
+    }
     public void AddXP(int amount)
     {
         currentXP += amount;

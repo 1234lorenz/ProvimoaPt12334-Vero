@@ -54,6 +54,10 @@ public class MissionManager : MonoBehaviour
       
         UpdateMissionUI(); // aggiungi questa riga
     }
+    public void AggiornaMissioniUI()
+    {
+        UpdateMissionUI();
+    }
     public void OnSmaltimento(RIFIUTIType type, int quantity)
     {
         // XP progressivi per ogni oggetto

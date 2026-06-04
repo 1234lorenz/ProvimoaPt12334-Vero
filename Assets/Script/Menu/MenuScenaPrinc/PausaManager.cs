@@ -20,6 +20,8 @@ public class PausaManager : MonoBehaviour
     private FirstPersonController playerController;
     private FadeManager fadeManager;
 
+    private bool canPause = false;
+
     void Start()
     {
         inputHandler = FindObjectOfType<PlayerInputHandler>();
@@ -28,10 +30,21 @@ public class PausaManager : MonoBehaviour
         pausaPanel.SetActive(false);
         if (opzioniPausaPanel != null)
             opzioniPausaPanel.SetActive(false);
+
+        // aspetta un frame prima di abilitare la pausa
+        StartCoroutine(AbilitaPausaRitardo());
+    }
+
+    private System.Collections.IEnumerator AbilitaPausaRitardo()
+    {
+        yield return new WaitForSeconds(0.5f);
+        canPause = true;
     }
 
     void Update()
     {
+        if (!canPause) return; //  blocca la pausa all'avvio
+
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (isPaused) Riprendi();

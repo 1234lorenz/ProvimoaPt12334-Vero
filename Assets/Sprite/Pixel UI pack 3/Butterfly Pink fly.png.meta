@@ -1,0 +1,655 @@
+fileFormatVersion: 2
+guid: 46c97d37dc622684f874a6659e9d0edd
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Butterfly Pink fly_0
+      rect:
+        serializedVersion: 2
+        x: 313
+        y: 2922
+        width: 355
+        height: 322
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ab87cdc48350d1b409f9932b24438d2d
+      internalID: -1607059608
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_1
+      rect:
+        serializedVersion: 2
+        x: 1334
+        y: 2922
+        width: 309
+        height: 322
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 72b4905cb7341ad42985ee9df31d8fde
+      internalID: -731495595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_2
+      rect:
+        serializedVersion: 2
+        x: 2348
+        y: 2922
+        width: 279
+        height: 322
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3cdfe9eb0d015654ba2f0cf6cc6b0a41
+      internalID: -1126166996
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_3
+      rect:
+        serializedVersion: 2
+        x: 3363
+        y: 2922
+        width: 248
+        height: 322
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ca7b772ac43be7841bd9cb673e42382a
+      internalID: 2023317486
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_4
+      rect:
+        serializedVersion: 2
+        x: 381
+        y: 2359
+        width: 215
+        height: 323
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d962d9e07186df74f8727d396d1b4d85
+      internalID: 1859866387
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_5
+      rect:
+        serializedVersion: 2
+        x: 1395
+        y: 2359
+        width: 185
+        height: 323
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 26b352168fe777643b53e6fb82b802e4
+      internalID: -2024937667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_6
+      rect:
+        serializedVersion: 2
+        x: 2406
+        y: 2359
+        width: 164
+        height: 323
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9d3e9c52efa551a4a87ce238a37c1c1f
+      internalID: 1669543179
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_7
+      rect:
+        serializedVersion: 2
+        x: 3416
+        y: 2359
+        width: 145
+        height: 323
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 58bc10ae7ae0bdb4682b9470779373a9
+      internalID: 1976412799
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_8
+      rect:
+        serializedVersion: 2
+        x: 422
+        y: 1797
+        width: 133
+        height: 322
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bf54f99206c762e459f247eac3b50823
+      internalID: -1442918862
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_9
+      rect:
+        serializedVersion: 2
+        x: 1414
+        y: 1797
+        width: 152
+        height: 322
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ae1da8db96a461f49992a14769e6092f
+      internalID: 1596332424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_10
+      rect:
+        serializedVersion: 2
+        x: 2393
+        y: 1797
+        width: 195
+        height: 322
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5837a18b470314e4fa39c193f7ed72cc
+      internalID: 1756461945
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_11
+      rect:
+        serializedVersion: 2
+        x: 3367
+        y: 1797
+        width: 246
+        height: 322
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 05592297322dcb54cb76211efbce6a2b
+      internalID: -1851890032
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_12
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 1234
+        width: 309
+        height: 323
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 77942d12e933db546bf6049da11bc22b
+      internalID: 653295713
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_13
+      rect:
+        serializedVersion: 2
+        x: 1305
+        y: 1234
+        width: 371
+        height: 323
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a78378f94e51fa14f825302841c24972
+      internalID: -322900343
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_14
+      rect:
+        serializedVersion: 2
+        x: 2279
+        y: 1234
+        width: 422
+        height: 323
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 03ccd08cb98c9584cac9d0d1cae31eeb
+      internalID: -297399605
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_15
+      rect:
+        serializedVersion: 2
+        x: 3258
+        y: 1234
+        width: 465
+        height: 325
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5e3053219882977489c892b50bb29587
+      internalID: -230782624
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_16
+      rect:
+        serializedVersion: 2
+        x: 242
+        y: 672
+        width: 496
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 43e5a0c95555f5c44aa86a2a1c64abbc
+      internalID: -160939516
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_17
+      rect:
+        serializedVersion: 2
+        x: 1230
+        y: 672
+        width: 520
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 13d934ff7e54df949ac3de97771c2d69
+      internalID: -986203320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_18
+      rect:
+        serializedVersion: 2
+        x: 2223
+        y: 672
+        width: 535
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8b74b045c1fc55b41bcb31a37639620d
+      internalID: 1610009318
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_19
+      rect:
+        serializedVersion: 2
+        x: 3221
+        y: 672
+        width: 539
+        height: 324
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c99b4aeb6abd4ec4c98c344437c769f4
+      internalID: 811283637
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_20
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 109
+        width: 541
+        height: 325
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a516d4d282238904aa2fe6dd10dbeb1d
+      internalID: 461448185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_21
+      rect:
+        serializedVersion: 2
+        x: 1221
+        y: 109
+        width: 539
+        height: 325
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 863835f2979d97248a7ba3d1ed5751b3
+      internalID: 346219279
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_22
+      rect:
+        serializedVersion: 2
+        x: 2227
+        y: 109
+        width: 527
+        height: 325
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9403bef011853b148b983aa07ffb24c0
+      internalID: 1279461259
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Butterfly Pink fly_23
+      rect:
+        serializedVersion: 2
+        x: 3244
+        y: 109
+        width: 492
+        height: 325
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8446674e953c38446acb5df7d500961d
+      internalID: 1291591298
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 627f27e64ffb4da43878c3dd1f38aed6
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      Butterfly Pink fly_0: -1607059608
+      Butterfly Pink fly_1: -731495595
+      Butterfly Pink fly_10: 1756461945
+      Butterfly Pink fly_11: -1851890032
+      Butterfly Pink fly_12: 653295713
+      Butterfly Pink fly_13: -322900343
+      Butterfly Pink fly_14: -297399605
+      Butterfly Pink fly_15: -230782624
+      Butterfly Pink fly_16: -160939516
+      Butterfly Pink fly_17: -986203320
+      Butterfly Pink fly_18: 1610009318
+      Butterfly Pink fly_19: 811283637
+      Butterfly Pink fly_2: -1126166996
+      Butterfly Pink fly_20: 461448185
+      Butterfly Pink fly_21: 346219279
+      Butterfly Pink fly_22: 1279461259
+      Butterfly Pink fly_23: 1291591298
+      Butterfly Pink fly_3: 2023317486
+      Butterfly Pink fly_4: 1859866387
+      Butterfly Pink fly_5: -2024937667
+      Butterfly Pink fly_6: 1669543179
+      Butterfly Pink fly_7: 1976412799
+      Butterfly Pink fly_8: -1442918862
+      Butterfly Pink fly_9: 1596332424
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

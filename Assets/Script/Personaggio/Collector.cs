@@ -177,16 +177,18 @@ public class Collector : MonoBehaviour
 
     private void Collect(RIFIUTI item)
     {
-
-        // se inventario pieno non raccogliere
         bool added = counterRifiuti.AddTrash(item.type, item.quantita);
         if (!added) return;
+
+        // registra l'ID del rifiuto raccolto
+        if (!string.IsNullOrEmpty(item.rifiutoID))
+            RifiutiManager.Instance.RegistraRaccolta(item.rifiutoID);
 
         item.SetOutline(false);
         itemsInRange.Remove(item);
         closestItem = null;
+        MissionManager.Instance.OnRaccolta();
         Destroy(item.gameObject);
-        MissionManager.Instance.OnRaccolta();//aggiorno delle missioni 
     }
 
     // disegna il raggio della sfera nell'editor per debug visivo
