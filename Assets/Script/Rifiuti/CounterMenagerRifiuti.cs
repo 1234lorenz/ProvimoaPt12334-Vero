@@ -33,7 +33,8 @@ public class CounterMenagerRifiuti : MonoBehaviour
         {
             if (slot.type == type)
             {
-                if (slot.currentCount >= slot.maxCount)
+                // CORREZIONE: Controlliamo in anticipo se la somma supera il massimo!
+                if (slot.currentCount + quantity > slot.maxCount)
                 {
                     // mostra messaggio inventario pieno
                     ShowFullMessage(type);
@@ -41,7 +42,7 @@ public class CounterMenagerRifiuti : MonoBehaviour
                 }
 
                 slot.currentCount += quantity;
-                slot.countText.text = $"{slot.currentCount}/{slot.maxCount}";//aggiornamento grafica del count 
+                slot.countText.text = $"{slot.currentCount}/{slot.maxCount}"; // aggiornamento grafica
                 return true;
             }
         }

@@ -5,7 +5,7 @@ public class RIFIUTI : MonoBehaviour
     public RIFIUTIType type;
 
     [Header("ID Univoco")]
-    public string rifiutoID; // imposta dall'Inspector su ogni rifiuto
+    public string rifiutoID; // imposto dall'Inspector su ogni rifiuto
 
     [Header("Quantità")]
     public int quantita = 1;

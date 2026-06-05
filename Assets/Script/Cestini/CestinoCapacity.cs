@@ -5,15 +5,16 @@ using TMPro;
 public class CestinoCapacity : MonoBehaviour
 {
     [Header("Impostazioni")]
-    public int maxCapacity = 30;        // limite massimo dall'Inspector
-    public int itemsPerSack = 10;       // ogni quanti oggetti appare un sacco
+    public int maxCapacity = 30;
+    public int itemsPerSack = 10;
+    public float distanzaInterazione = 4f; //Distanza massima per poter svuotare il cestino
 
     [Header("Riferimenti")]
-    public GameObject sackPrefab;       // prefab del sacco
-    public Transform spawnPoint;        // punto dove spawna il primo sacco
-    public Transform fullCollider;      // collider in cima al cestino
-    public TextMeshProUGUI fullMessage; // messaggio "Cestino pieno!"
-    public ParticleSystem smaltimentoFX; // effetto particelle smaltimento
+    public GameObject sackPrefab;
+    public Transform spawnPoint;
+    public Transform fullCollider;
+    public TextMeshProUGUI fullMessage;
+    public ParticleSystem smaltimentoFX;
 
     [Header("Input")]
     public KeyCode smaltimentoKey = KeyCode.F;
@@ -21,6 +22,14 @@ public class CestinoCapacity : MonoBehaviour
     private int currentCount = 0;
     private bool isFull = false;
     private System.Collections.Generic.List<GameObject> sacks = new System.Collections.Generic.List<GameObject>();
+    private Transform player; // NUOVO: Riferimento al giocatore
+
+    void Start()
+    {
+        // Trova il giocatore all'avvio
+        GameObject p = GameObject.FindWithTag("Player");
+        if (p != null) player = p.transform;
+    }
 
     public bool AddItem()
     {
@@ -29,18 +38,14 @@ public class CestinoCapacity : MonoBehaviour
         currentCount++;
 
         // ogni itemsPerSack oggetti spawna un sacco
-        if (currentCount % itemsPerSack == 0)//ogni multiplo di 10 spunta un sacco 
+        if (currentCount % itemsPerSack == 0)
             SpawnSack();
 
         // cestino pieno?
         if (currentCount >= maxCapacity)
         {
             isFull = true;
-            if (fullMessage != null)
-            {
-                fullMessage.gameObject.SetActive(true);
-                fullMessage.text = $"Cestino {GetComponent<Cestino>().acceptedType} pieno!\nPremi F per smaltire";
-            }
+            //  NON accendiamo più la scritta qui, ci pensa l'Update se sei vicino!
         }
 
         return true;
@@ -50,40 +55,64 @@ public class CestinoCapacity : MonoBehaviour
     {
         if (sackPrefab == null || spawnPoint == null) return;
 
-        // calcola posizione — ogni sacco è più in alto del precedente
-        Vector3 pos = spawnPoint.position + Vector3.up * (sacks.Count * 0.3f);//poszione del sacco = posizionde di partenza + direzione Vertical * altezza totale
-        GameObject sack = Instantiate(sackPrefab, pos, Quaternion.Euler(0,Random.Range(0,360),0), transform);
+        Vector3 pos = spawnPoint.position + Vector3.up * (sacks.Count * 0.3f);
+        GameObject sack = Instantiate(sackPrefab, pos, Quaternion.Euler(0, Random.Range(0, 360), 0), transform);
         sacks.Add(sack);
     }
 
     void Update()
     {
-        // smaltimento
-        if (Input.GetKeyDown(smaltimentoKey) && isFull)
-            StartCoroutine(Smaltimento());
+        // NUOVO: Controllo distanza per la UI e l'Input
+        if (isFull && player != null)
+        {
+            // Calcola la distanza tra il cestino e il Player
+            float distanza = Vector3.Distance(transform.position, player.position);
+
+            if (distanza <= distanzaInterazione)
+            {
+                // Mostra la scritta solo se sei vicino
+                if (fullMessage != null && !fullMessage.gameObject.activeSelf)
+                {
+                    fullMessage.gameObject.SetActive(true);
+                    // Prova a recuperare il tipo di cestino (se hai uno script Cestino attaccato)
+                    Cestino cestino = GetComponent<Cestino>();
+                    string tipo = (cestino != null) ? cestino.acceptedType.ToString() : "";
+                    fullMessage.text = $"Cestino {tipo} pieno!\nPremi {smaltimentoKey} per smaltire";
+                }
+
+                // Permetti lo smaltimento solo se sei vicino
+                if (Input.GetKeyDown(smaltimentoKey))
+                    StartCoroutine(Smaltimento());
+            }
+            else
+            {
+                // Se ti allontani troppo, nascondi la scritta
+                if (fullMessage != null && fullMessage.gameObject.activeSelf)
+                {
+                    fullMessage.gameObject.SetActive(false);
+                }
+            }
+        }
     }
 
     private IEnumerator Smaltimento()
     {
-        // effetto particelle
         if (smaltimentoFX != null)
             smaltimentoFX.Play();
 
+        // Spegni subito la scritta appena premi il tasto
+        if (fullMessage != null)
+            fullMessage.gameObject.SetActive(false);
+
         yield return new WaitForSeconds(0.5f);
         MissionManager.Instance.OnCestinoSmaltito();
-        // distruggi tutti i sacchi
+
         foreach (var sack in sacks)
             Destroy(sack);
         sacks.Clear();
 
-        // reset
-        currentCount = 0;//l contatore dei rifiuti interni torna a zero.
-        isFull = false;//Questa è la chiave! Sblocca la barriera iniziale dell' AddItem.
-                       //Ora il cestino è ufficialmente vuoto e l'interruttore torna a dare il "via libera" per accettare nuovi rifiuti.
-
-        if (fullMessage != null)
-            fullMessage.gameObject.SetActive(false);
-       
+        currentCount = 0;
+        isFull = false;
     }
 
     public bool IsFull()

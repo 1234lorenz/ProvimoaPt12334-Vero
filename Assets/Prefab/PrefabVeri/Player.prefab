@@ -274,9 +274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 863ecb9a2a9f31341ab16799e0f288d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hp: 100
-  defense: 40
-  walkSpeed: 3
+  walkSpeed: 5
   sprintMultipler: 2
   JumpForce: 5
   grevityMultipler: 1
@@ -285,8 +283,6 @@ MonoBehaviour:
   characterController: {fileID: 2131267439786057120}
   mainCamera: {fileID: 8394040256049062398}
   playerInputHandler: {fileID: 0}
-  camera_shake: {fileID: 756272030431342305}
-  volume: {fileID: 0}
 --- !u!143 &2131267439786057120
 CharacterController:
   m_ObjectHideFlags: 0
@@ -336,6 +332,7 @@ MonoBehaviour:
     m_Bits: 8
   collectPromptUI: {fileID: 0}
   promptText: {fileID: 0}
+  panelCestinoPrompt: {fileID: 0}
   inputHandler: {fileID: 0}
 --- !u!114 &3608340658618666377
 MonoBehaviour:
@@ -370,5 +367,6 @@ MonoBehaviour:
     maxCount: 5
     countText: {fileID: 0}
     currentCount: 0
+  fullMessagePanel: {fileID: 0}
   fullMessage: {fileID: 0}
   messageDuration: 2

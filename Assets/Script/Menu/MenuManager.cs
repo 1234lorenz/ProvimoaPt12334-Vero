@@ -57,7 +57,14 @@ public class MenuManager : MonoBehaviour
 
     public void Esci()
     {
+        Debug.Log("Uscita dal gioco...");
+
+        // Chiude il gioco se è avviato come applicazione (.exe)
         Application.Quit();
-        Debug.Log("Uscita dal gioco");
+
+        // Chiude il gioco se lo stai provando dentro l'Editor di Unity
+        #if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+        #endif
     }
 }

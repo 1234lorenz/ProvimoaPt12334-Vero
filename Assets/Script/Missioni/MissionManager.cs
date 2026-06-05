@@ -49,15 +49,31 @@ public class MissionManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
     }
+
     void Start()
     {
-      
-        UpdateMissionUI(); // aggiungi questa riga
+        UpdateMissionUI();
     }
+
     public void AggiornaMissioniUI()
     {
         UpdateMissionUI();
     }
+
+    // NUOVA FUNZIONE: Calcola quanti oggetti mancano per completare la missione di quella categoria
+    public int GetMancanti(RIFIUTIType type)
+    {
+        switch (type)
+        {
+            case RIFIUTIType.Plastica: return plasticaCompleta ? 0 : Mathf.Max(0, plasticaTarget - plasticaSmaltite);
+            case RIFIUTIType.Organico: return organicoCompleto ? 0 : Mathf.Max(0, organicoTarget - organicoSmaltiti);
+            case RIFIUTIType.Carta: return cartaCompleta ? 0 : Mathf.Max(0, cartaTarget - cartaSmaltita);
+            case RIFIUTIType.Vetro: return vetroCompleto ? 0 : Mathf.Max(0, vetroTarget - vetroSmaltito);
+            case RIFIUTIType.Metallo: return metalloCompleto ? 0 : Mathf.Max(0, metalloTarget - metalloSmaltito);
+            default: return 0;
+        }
+    }
+
     public void OnSmaltimento(RIFIUTIType type, int quantity)
     {
         // XP progressivi per ogni oggetto
@@ -147,7 +163,6 @@ public class MissionManager : MonoBehaviour
         return cestiniSmaltiti >= cestiniTarget;
     }
 
-    // resetta le missioni quando si sale di livello
     public void ResetMissioni()
     {
         plasticaSmaltite = 0; organicoSmaltiti = 0; cartaSmaltita = 0;
@@ -163,25 +178,34 @@ public class MissionManager : MonoBehaviour
 
         if (XPManager.Instance.currentLevel == 1)
         {
+            //  MODIFICATO: Mathf.Min blocca la visualizzazione grafica al valore massimo del Target
+            int plasticaVisualizzata = Mathf.Min(plasticaSmaltite, plasticaTarget);
+            int organicoVisualizzato = Mathf.Min(organicoSmaltiti, organicoTarget);
+            int cartaVisualizzata = Mathf.Min(cartaSmaltita, cartaTarget);
+
             missionText.text =
                 $"Missioni Zona 1:\n" +
-                $"Plastica: {plasticaSmaltite}/{plasticaTarget} {(plasticaCompleta ? "[V]" : "")}\n" +
-                $"Organico: {organicoSmaltiti}/{organicoTarget} {(organicoCompleto ? "[V]" : "")}\n" +
-                $"Carta: {cartaSmaltita}/{cartaTarget} {(cartaCompleta ? "[V]" : "")}";
+                $"Plastica: {plasticaVisualizzata}/{plasticaTarget} {(plasticaCompleta ? "[V]" : "")}\n" +
+                $"Organico: {organicoVisualizzato}/{organicoTarget} {(organicoCompleto ? "[V]" : "")}\n" +
+                $"Carta: {cartaVisualizzata}/{cartaTarget} {(cartaCompleta ? "[V]" : "")}";
         }
         else if (XPManager.Instance.currentLevel == 2)
         {
+            int vetroVisualizzato = Mathf.Min(vetroSmaltito, vetroTarget);
+            int metalloVisualizzato = Mathf.Min(metalloSmaltito, metalloTarget);
+
             missionText.text =
                 $"Missioni Zona 2:\n" +
-                $"Vetro: {vetroSmaltito}/{vetroTarget} {(vetroCompleto ? "[V]" : "")}\n" +
-                $"Metallo: {metalloSmaltito}/{metalloTarget} {(metalloCompleto ? "[V]" : "")}\n" +
+                $"Vetro: {vetroVisualizzato}/{vetroTarget} {(vetroCompleto ? "[V]" : "")}\n" +
+                $"Metallo: {metalloVisualizzato}/{metalloTarget} {(metalloCompleto ? "[V]" : "")}\n" +
                 $"Cestini: {cestiniSmaltiti}/1";
         }
         else
         {
+            int cestiniVisualizzati = Mathf.Min(cestiniSmaltiti, cestiniTarget);
             missionText.text =
                 $"Missioni Zona 3:\n" +
-                $"Cestini smaltiti: {cestiniSmaltiti}/{cestiniTarget}";
+                $"Cestini smaltiti: {cestiniVisualizzati}/{cestiniTarget}";
         }
     }
 }
