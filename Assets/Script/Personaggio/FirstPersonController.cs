@@ -2,34 +2,35 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/*
- * Cosa fa il personaggio?
- Legge i valori dal primo script
- Gestisce movimento, salto, rotazione, gravità
- Non sa nulla di tastiera o input
- *
- */
 public class FirstPersonController : MonoBehaviour
 {
     [Header("Movement Speed")]
     [SerializeField] private float walkSpeed = 3.0f;
-    [SerializeField] private float sprintMultipler = 3.0f;
-    [HideInInspector] public float moltiplicatoreVelocita = 1f; // 1 significa velocità normale
+    [SerializeField] private float sprintMultipler = 2.0f;
+    [HideInInspector] public float moltiplicatoreVelocita = 1f;
 
     [Header("Jump Parameters")]
     [SerializeField] private float JumpForce = 5.0f;
     [SerializeField] private float grevityMultipler = 1.0f;
 
     [Header("Look Parameters")]
-    public float mouseSesitivity = 0.1f; // Resa pubblica per OpzioniManager
+    public float mouseSesitivity = 0.1f;
     [SerializeField] private float upDownLookRange = 80f;
+
+    [Header("View Switch Setup")]
+    public GameObject thirdPersonCam; // Trascina qui Cm_freeLook1
+    public GameObject firstPersonCam; // Trascina qui la nuova VCam della 1a persona
+    public Transform headTarget;      // Trascina qui il tuo CameraTarget
+    public bool isFirstPerson = false; // Stato iniziale
 
     [Header("Reference")]
     [SerializeField] private CharacterController characterController;
     [SerializeField] private Camera mainCamera;
     [SerializeField] private PlayerInputHandler playerInputHandler;
+    [SerializeField] private Animator animator;
 
     private Vector3 currentMovement;
+    private float currentSpeed = 0f;
     private float verticalRotation;
 
     private float CurrentSpeed => walkSpeed * (playerInputHandler.SprintTrigger ? sprintMultipler : 1) * moltiplicatoreVelocita;
@@ -39,33 +40,35 @@ public class FirstPersonController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         mouseSesitivity = PlayerPrefs.GetFloat("Sensibilita", 0.1f);
+
+        // Assicuriamoci che all'avvio le telecamere siano nello stato giusto
+        UpdateCameraState();
     }
 
     void Update()
     {
-        HandleMovement();
-        HandleRotation();
+        // Switch della telecamera premendo 'V'
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            isFirstPerson = !isFirstPerson;
+            UpdateCameraState();
+        }
+
+        // Scegli quale logica di movimento usare
+        if (isFirstPerson)
+        {
+            HandleFirstPersonLogic();
+        }
+        else
+        {
+            HandleThirdPersonLogic();
+        }
     }
 
-    private Vector3 CalculateWorldDirection() // Calcola solo la direzione — non muove nulla.
+    private void UpdateCameraState()
     {
-        // L'input del giocatore arriva come Vector2 (x = sinistra/destra, y = avanti/indietro)
-        // Lo convertiamo in Vector3 perché il mondo di gioco è 3D.
-        // L'asse Y lo mettiamo a 0 perché WASD non controlla il su/giù.
-        Vector3 inputDirection = new Vector3(
-            playerInputHandler.MovementInput.x,   // sinistra / destra
-            0f,                                   // su / giù (sempre 0)
-            playerInputHandler.MovementInput.y    // avanti / indietro
-        );
-
-        // TransformDirection converte la direzione da "locale" a "mondiale".
-        // Senza questa riga, premere W andrebbe sempre verso il Nord della scena.
-        // Con questa riga, il giocatore va nella direzione verso cui sta guardando.
-        Vector3 worldDirection = transform.TransformDirection(inputDirection);
-
-        // normalized ridimensiona il vettore in modo che abbia sempre lunghezza 1.
-        // Senza questo, muoversi in diagonale (es. W + D) sarebbe più veloce.
-        return worldDirection.normalized;
+        if (thirdPersonCam != null) thirdPersonCam.SetActive(!isFirstPerson);
+        if (firstPersonCam != null) firstPersonCam.SetActive(isFirstPerson);
     }
 
     private void HandleJumping()
@@ -76,6 +79,7 @@ public class FirstPersonController : MonoBehaviour
             if (playerInputHandler.JumpTrigger)
             {
                 currentMovement.y = JumpForce;
+                animator.SetTrigger("Jump");
             }
         }
         else
@@ -84,34 +88,76 @@ public class FirstPersonController : MonoBehaviour
         }
     }
 
-    private void HandleMovement()
+    private void ApplyGravity()
     {
-        Vector3 wordlDirection = CalculateWorldDirection();
+        if (!characterController.isGrounded)
+        {
+            currentMovement.y += Physics.gravity.y * grevityMultipler * Time.deltaTime;
+        }
+    }
 
-        currentMovement.x = wordlDirection.x * CurrentSpeed;
-        currentMovement.z = wordlDirection.z * CurrentSpeed;
+    // --- LOGICA TERZA PERSONA (Quella che abbiamo già sistemato) ---
+    private void HandleThirdPersonLogic()
+    {
+        Vector3 camForward = mainCamera.transform.forward;
+        Vector3 camRight = mainCamera.transform.right;
+        camForward.y = 0;
+        camRight.y = 0;
+        camForward.Normalize();
+        camRight.Normalize();
 
-        HandleJumping(); // Gestisco la Y separatamente
+        Vector3 worldDirection = (camForward * playerInputHandler.MovementInput.y) + (camRight * playerInputHandler.MovementInput.x);
+        worldDirection.Normalize();
+
+        currentMovement.x = worldDirection.x * CurrentSpeed;
+        currentMovement.z = worldDirection.z * CurrentSpeed;
+
+        HandleJumping();
+
+        float targetSpeed = worldDirection.sqrMagnitude > 0.01f ? (playerInputHandler.SprintTrigger ? 2f : 1f) : 0f;
+        currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.deltaTime * 10f);
+        animator.SetFloat("Speed", currentSpeed);
+
         characterController.Move(currentMovement * Time.deltaTime);
+
+        if (worldDirection.sqrMagnitude > 0.01f)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(worldDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 15f);
+        }
     }
 
-    private void ApplyHorizontalRotation(float rotationAmount)
+    // --- LOGICA PRIMA PERSONA ---
+    private void HandleFirstPersonLogic()
     {
-        transform.Rotate(0, rotationAmount, 0); // Asse Y per la rotazione destra/sinistra
-    }
-
-    private void ApplyVeritcalRotation(float rotationAmount)
-    {
-        verticalRotation = Mathf.Clamp(verticalRotation - rotationAmount, -upDownLookRange, upDownLookRange);
-        mainCamera.transform.localRotation = Quaternion.Euler(verticalRotation, 0, 0);
-    }
-
-    private void HandleRotation()
-    {
+        // 1. Rotazione con il Mouse
         float mouseXRotation = playerInputHandler.RotationInput.x * mouseSesitivity;
         float mouseYRotation = playerInputHandler.RotationInput.y * mouseSesitivity;
 
-        ApplyHorizontalRotation(mouseXRotation);
-        ApplyVeritcalRotation(mouseYRotation);
+        // Gira il corpo a destra/sinistra
+        transform.Rotate(0, mouseXRotation, 0);
+
+        // Inclina la testa (headTarget) su/giù
+        verticalRotation -= mouseYRotation;
+        verticalRotation = Mathf.Clamp(verticalRotation, -upDownLookRange, upDownLookRange);
+        if (headTarget != null)
+        {
+            headTarget.localRotation = Quaternion.Euler(verticalRotation, 0, 0);
+        }
+
+        // 2. Movimento
+        Vector3 moveDirection = (transform.forward * playerInputHandler.MovementInput.y) + (transform.right * playerInputHandler.MovementInput.x);
+        moveDirection.Normalize();
+
+        currentMovement.x = moveDirection.x * CurrentSpeed;
+        currentMovement.z = moveDirection.z * CurrentSpeed;
+
+        HandleJumping();
+
+        float targetSpeed = moveDirection.sqrMagnitude > 0.01f ? (playerInputHandler.SprintTrigger ? 2f : 1f) : 0f;
+        currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.deltaTime * 10f);
+        animator.SetFloat("Speed", currentSpeed);
+
+        characterController.Move(currentMovement * Time.deltaTime);
     }
 }
