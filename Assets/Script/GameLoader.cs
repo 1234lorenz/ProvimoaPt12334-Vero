@@ -7,31 +7,38 @@ public class GameLoader : MonoBehaviour
     {
         Time.timeScale = 1f;
 
+        // FORZIAMO il nero subito, prima ancora che il gioco disegni il primo frame
+        if (FadeManager.Instance != null && FadeManager.Instance.fadePanel != null)
+        {
+            FadeManager.Instance.fadePanel.gameObject.SetActive(true);
+            FadeManager.Instance.fadePanel.color = new Color(0, 0, 0, 1); // Nero opaco al 100%
+        }
+
         if (SaveManager.Instance != null && SaveManager.Instance.slotDaCaricare != -1)
         {
             StartCoroutine(CaricaConRitardo());
         }
+        else
+        {
+            if (FadeManager.Instance != null) FadeManager.Instance.StartFadeIn();
+        }
     }
 
-    
     private IEnumerator CaricaConRitardo()
     {
-        Time.timeScale = 1f;
-        yield return null;
-        yield return null;
+        // Aspettiamo un attimo prima di caricare per dare tempo al sistema di inizializzare
+        yield return new WaitForSeconds(0.1f);
 
         SaveManager.Instance.Carica(SaveManager.Instance.slotDaCaricare);
         SaveManager.Instance.slotDaCaricare = -1;
 
-        // aggiorna UI dopo il caricamento
-        yield return null;
+        // Aspettiamo che il teletrasporto e il posizionamento siano completati
+        yield return new WaitForSeconds(0.4f);
 
-        CounterMenagerRifiuti counter = FindObjectOfType<CounterMenagerRifiuti>();
-        if (counter != null)
-            counter.AggiornaTuttoUI();
-
-        MissionManager.Instance.AggiornaMissioniUI();
-        XPManager.Instance.AggiornaUI();
+        // Ora che tutto è al posto giusto, togliamo il nero
+        if (FadeManager.Instance != null)
+        {
+            FadeManager.Instance.StartFadeIn();
+        }
     }
-
 }

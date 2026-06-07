@@ -769,7 +769,7 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 597442894}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.00000017881393, y: 0}
+  m_AnchorMin: {x: 0.000000059604645, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
@@ -2146,8 +2146,8 @@ RectTransform:
   - {fileID: 644724335}
   - {fileID: 1539198132}
   - {fileID: 1050060311}
-  - {fileID: 556212991}
   - {fileID: 1611684860}
+  - {fileID: 556212991}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -16097,7 +16097,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 229311348}
   m_Direction: 0
   m_Value: 1
-  m_Size: 0.9999998
+  m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -16767,7 +16767,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fadePanel: {fileID: 556212992}
-  fadeDuration: 1
+  fadeDuration: 0.3
 --- !u!1 &1871069947
 GameObject:
   m_ObjectHideFlags: 0

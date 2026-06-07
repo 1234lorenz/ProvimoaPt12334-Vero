@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Collections.Generic; // Necessario per gestire le liste dello zaino
+using System.Collections.Generic;
 
 public class SaveManager : MonoBehaviour
 {
@@ -58,7 +58,7 @@ public class SaveManager : MonoBehaviour
             data.playerZ = player.transform.position.z;
         }
 
-        //  NUOVO: Salva lo stato attuale degli oggetti dentro lo zaino
+        // NUOVO: Salva lo stato attuale degli oggetti dentro lo zaino
         CounterMenagerRifiuti counter = FindObjectOfType<CounterMenagerRifiuti>();
         if (counter != null)
         {
@@ -110,16 +110,23 @@ public class SaveManager : MonoBehaviour
         MissionManager.Instance.metalloCompleto = data.metalloCompleto;
         MissionManager.Instance.cestiniSmaltiti = data.cestiniSmaltiti;
 
-        // MODIFICATO: Sposta il player disattivando temporaneamente il Character Controller
+        // --- APPLICAZIONE DEL NUOVO METODO DI TELETRASPORTO ---
         GameObject player = GameObject.FindWithTag("Player");
         if (player != null)
         {
-            CharacterController cc = player.GetComponent<CharacterController>();
-            if (cc != null) cc.enabled = false; // Spegne la fisica del movimento
+            Vector3 posizioneSalvata = new Vector3(data.playerX, data.playerY, data.playerZ);
 
-            player.transform.position = new Vector3(data.playerX, data.playerY, data.playerZ);
-
-            if (cc != null) cc.enabled = true; // Riaccende la fisica
+            FirstPersonController fpc = player.GetComponent<FirstPersonController>();
+            if (fpc != null)
+            {
+                // Chiama la funzione che teletrasporta Player + Cinemachine insieme
+                fpc.Teletrasporta(posizioneSalvata);
+            }
+            else
+            {
+                // Sistema di sicurezza nel caso lo script non venga trovato
+                player.transform.position = posizioneSalvata;
+            }
         }
 
         // NUOVO: Ripristina i rifiuti che avevi dentro lo zaino e aggiorna la grafica UI

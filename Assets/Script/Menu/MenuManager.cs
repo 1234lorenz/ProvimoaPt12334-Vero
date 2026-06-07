@@ -28,6 +28,29 @@ public class MenuManager : MonoBehaviour
         fadeManager.FadeToScene("SampleScene");
     }
 
+    // --- NUOVA FUNZIONE PER I BOTTONI "CARICA" DEL MENU ---
+    public void CaricaSlot(int numeroSlot)
+    {
+        Time.timeScale = 1f;
+
+        // 1. Diciamo al SaveManager quale slot vogliamo che il GameLoader carichi dopo
+        if (SaveManager.Instance != null)
+        {
+            SaveManager.Instance.slotDaCaricare = numeroSlot;
+        }
+
+        // 2. Avviamo il caricamento con il FADE (schermo nero), esattamente come quando fai "Gioca"
+        if (fadeManager != null)
+        {
+            fadeManager.FadeToScene("SampleScene");
+        }
+        else
+        {
+            // Sicurezza nel caso non trovasse il FadeManager
+            SceneManager.LoadScene("SampleScene");
+        }
+    }
+
     public void ApriOpzioni()
     {
         pannelloMenu.SetActive(false);
@@ -37,6 +60,7 @@ public class MenuManager : MonoBehaviour
     public void ApriCrediti()
     {
         pannelloMenu.SetActive(false);
+        pannelloOpzioni.SetActive(false); // Sicurezza
         pannelloCrediti.SetActive(true);
     }
 
@@ -63,8 +87,8 @@ public class MenuManager : MonoBehaviour
         Application.Quit();
 
         // Chiude il gioco se lo stai provando dentro l'Editor di Unity
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
-        #endif
+#endif
     }
 }

@@ -8,8 +8,13 @@ public class CaricamentoUI : MonoBehaviour
     [Header("UI")]
     public Transform slotContainer;
     public GameObject slotPrefabCaricamento;
-
+    private FadeManager fadeManager; 
     private const int NUM_SLOTS = 6;
+
+    void Start()
+    {
+        fadeManager = FindObjectOfType<FadeManager>(); 
+    }
 
     public void AggiornaSlotsUI()
     {
@@ -20,7 +25,6 @@ public class CaricamentoUI : MonoBehaviour
         {
             int slotIndex = i + 1;
             GameObject slotObj = Instantiate(slotPrefabCaricamento, slotContainer);
-
             var testo = slotObj.GetComponentInChildren<TextMeshProUGUI>();
 
             if (SaveManager.Instance.SlotOccupato(slotIndex))
@@ -36,14 +40,13 @@ public class CaricamentoUI : MonoBehaviour
             var bottoni = slotObj.GetComponentsInChildren<Button>();
             int capturedSlot = slotIndex;
 
-            // bottone CARICA
+            // bottone CARICA — usa FadeManager invece di LoadScene diretto
             bottoni[0].onClick.AddListener(() =>
             {
                 SaveManager.Instance.slotDaCaricare = capturedSlot;
-                SceneManager.LoadScene("SampleScene");
+                fadeManager.FadeToScene("SampleScene"); //  cambiato!
             });
 
-            // bottone ELIMINA
             if (bottoni.Length > 1)
             {
                 bottoni[1].onClick.AddListener(() =>
@@ -51,11 +54,9 @@ public class CaricamentoUI : MonoBehaviour
                     SaveManager.Instance.Elimina(capturedSlot);
                     AggiornaSlotsUI();
                 });
-
                 bottoni[1].gameObject.SetActive(SaveManager.Instance.SlotOccupato(slotIndex));
             }
 
-            // disabilita carica se slot vuoto
             bottoni[0].interactable = SaveManager.Instance.SlotOccupato(slotIndex);
         }
     }

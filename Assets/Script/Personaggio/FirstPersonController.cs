@@ -18,10 +18,10 @@ public class FirstPersonController : MonoBehaviour
     [SerializeField] private float upDownLookRange = 80f;
 
     [Header("View Switch Setup")]
-    public GameObject thirdPersonCam; // Trascina qui Cm_freeLook1
-    public GameObject firstPersonCam; // Trascina qui la nuova VCam della 1a persona
-    public Transform headTarget;      // Trascina qui il tuo CameraTarget
-    public bool isFirstPerson = false; // Stato iniziale
+    public GameObject thirdPersonCam;
+    public GameObject firstPersonCam;
+    public Transform headTarget;
+    public bool isFirstPerson = false;
 
     [Header("Reference")]
     [SerializeField] private CharacterController characterController;
@@ -41,20 +41,20 @@ public class FirstPersonController : MonoBehaviour
         Cursor.visible = false;
         mouseSesitivity = PlayerPrefs.GetFloat("Sensibilita", 0.1f);
 
-        // Assicuriamoci che all'avvio le telecamere siano nello stato giusto
         UpdateCameraState();
+
+        // Evita movimenti strani della telecamera all'avvio della scena
+        Cinemachine.CinemachineCore.Instance.OnTargetObjectWarped(transform, Vector3.zero);
     }
 
     void Update()
     {
-        // Switch della telecamera premendo 'V'
         if (Input.GetKeyDown(KeyCode.V))
         {
             isFirstPerson = !isFirstPerson;
             UpdateCameraState();
         }
 
-        // Scegli quale logica di movimento usare
         if (isFirstPerson)
         {
             HandleFirstPersonLogic();
@@ -88,15 +88,6 @@ public class FirstPersonController : MonoBehaviour
         }
     }
 
-    private void ApplyGravity()
-    {
-        if (!characterController.isGrounded)
-        {
-            currentMovement.y += Physics.gravity.y * grevityMultipler * Time.deltaTime;
-        }
-    }
-
-    // --- LOGICA TERZA PERSONA (Quella che abbiamo già sistemato) ---
     private void HandleThirdPersonLogic()
     {
         Vector3 camForward = mainCamera.transform.forward;
@@ -127,17 +118,13 @@ public class FirstPersonController : MonoBehaviour
         }
     }
 
-    // --- LOGICA PRIMA PERSONA ---
     private void HandleFirstPersonLogic()
     {
-        // 1. Rotazione con il Mouse
         float mouseXRotation = playerInputHandler.RotationInput.x * mouseSesitivity;
         float mouseYRotation = playerInputHandler.RotationInput.y * mouseSesitivity;
 
-        // Gira il corpo a destra/sinistra
         transform.Rotate(0, mouseXRotation, 0);
 
-        // Inclina la testa (headTarget) su/giù
         verticalRotation -= mouseYRotation;
         verticalRotation = Mathf.Clamp(verticalRotation, -upDownLookRange, upDownLookRange);
         if (headTarget != null)
@@ -145,7 +132,6 @@ public class FirstPersonController : MonoBehaviour
             headTarget.localRotation = Quaternion.Euler(verticalRotation, 0, 0);
         }
 
-        // 2. Movimento
         Vector3 moveDirection = (transform.forward * playerInputHandler.MovementInput.y) + (transform.right * playerInputHandler.MovementInput.x);
         moveDirection.Normalize();
 
@@ -159,5 +145,24 @@ public class FirstPersonController : MonoBehaviour
         animator.SetFloat("Speed", currentSpeed);
 
         characterController.Move(currentMovement * Time.deltaTime);
+    }
+
+    // --- NUOVA FUNZIONE PER IL CARICAMENTO DELLA PARTITA ---
+    public void Teletrasporta(Vector3 nuovaPosizione)
+    {
+        // Disabilita temporaneamente il controller fisico
+        characterController.enabled = false;
+
+        // Calcola la distanza tra dove sei e dove devi andare (serve a Cinemachine)
+        Vector3 deltaSpostamento = nuovaPosizione - transform.position;
+
+        // Sposta fisicamente il giocatore
+        transform.position = nuovaPosizione;
+
+        // Ordina a Cinemachine di saltare istantaneamente per evitare l'effetto "volo"
+        Cinemachine.CinemachineCore.Instance.OnTargetObjectWarped(transform, deltaSpostamento);
+
+        // Riattiva il controller fisico
+        characterController.enabled = true;
     }
 }
