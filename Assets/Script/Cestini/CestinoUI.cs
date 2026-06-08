@@ -32,6 +32,8 @@ public class CestinoUI : MonoBehaviour
     public Sprite organicoIcon;
     public Sprite seccoIcon;
 
+   
+
     void Start()
     {
         inventory = FindObjectOfType<CounterMenagerRifiuti>();
@@ -182,7 +184,9 @@ public class CestinoUI : MonoBehaviour
             return;
         }
 
-        //  NUOVA MODIFICA: Controlla quanti ne mancano alla missione ed evita gli sprechi nell'inventario
+        bool eraInEccesso = false; // Ci serve per capire se il gioco ha frenato l'input
+
+        // Controlla quanti ne mancano alla missione ed evita gli sprechi nell'inventario
         if (MissionManager.Instance != null)
         {
             int mancanti = MissionManager.Instance.GetMancanti(selectedType);
@@ -191,6 +195,7 @@ public class CestinoUI : MonoBehaviour
             if (mancanti > 0 && quantity > mancanti)
             {
                 quantity = mancanti;
+                eraInEccesso = true; // Ci segniamo che è scattato il limite della missione
             }
         }
 
@@ -198,8 +203,47 @@ public class CestinoUI : MonoBehaviour
 
         if (success)
         {
-            quantityPanel.SetActive(false);
-            AggiornaSlotsUI();
+            if (eraInEccesso)
+            {
+                // Se era in eccesso, facciamo partire il messaggio visivo temporizzato
+                StartCoroutine(MostraMessaggioLimiteMissione());
+            }
+            else
+            {
+                // Se era tutto normale, chiudiamo subito il pannello come prima
+                quantityPanel.SetActive(false);
+                AggiornaSlotsUI();
+            }
         }
+    }
+
+    // NUOVA COROUTINE: Mostra il feedback al giocatore e poi chiude la UI
+    private IEnumerator MostraMessaggioLimiteMissione()
+    {
+        // 1. Prendiamo il "motore di posizionamento" della scritta (il RectTransform)
+        RectTransform rectText = quantityLabel.GetComponent<RectTransform>();
+
+        // 2. Ci salviamo la sua posizione originale per non perderla
+        Vector2 posizioneOriginale = rectText.anchoredPosition;
+
+        // 3. Spostiamo la scritta più in alto (es. +100 pixel sull'asse Y). 
+        // Puoi cambiare 100f con 150f o 200f se la vuoi ancora più in alto!
+        rectText.anchoredPosition = posizioneOriginale + new Vector2(20f, 250f);
+
+        // 4. Cambiamo il testo e lo coloriamo
+        quantityLabel.text = "<color=yellow>Quantità limitata al target di missione,Il resto rimane nello zaino.!";
+        
+        quantityInput.interactable = false;
+
+        // Aspettiamo i 2.5 secondi
+        yield return new WaitForSecondsRealtime(2.5f);
+
+        // 5. PRIMA di chiudere, rimettiamo la scritta al suo posto originale
+        rectText.anchoredPosition = posizioneOriginale;
+
+        // Ripristiniamo tutto il resto
+        quantityInput.interactable = true;
+        quantityPanel.SetActive(false);
+        AggiornaSlotsUI();
     }
 }

@@ -5,8 +5,8 @@ using TMPro;
 public class CestinoCapacity : MonoBehaviour
 {
     [Header("Impostazioni")]
-    public int maxCapacity = 30;
-    public int itemsPerSack = 10;
+    public int maxCapacity;
+    public int itemsPerSack;
     public float distanzaInterazione = 4f; //Distanza massima per poter svuotare il cestino
 
     [Header("Riferimenti")]
@@ -19,7 +19,7 @@ public class CestinoCapacity : MonoBehaviour
     [Header("Input")]
     public KeyCode smaltimentoKey = KeyCode.F;
 
-    private int currentCount = 0;
+    public int currentCount = 0;
     private bool isFull = false;
     private System.Collections.Generic.List<GameObject> sacks = new System.Collections.Generic.List<GameObject>();
     private Transform player; // NUOVO: Riferimento al giocatore
