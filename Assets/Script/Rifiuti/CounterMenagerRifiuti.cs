@@ -33,7 +33,7 @@ public class CounterMenagerRifiuti : MonoBehaviour
         {
             if (slot.type == type)
             {
-                // CORREZIONE: Controlliamo in anticipo se la somma supera il massimo!
+                // Controlliamo in anticipo se la somma supera il massimo!
                 if (slot.currentCount + quantity > slot.maxCount)
                 {
                     // mostra messaggio inventario pieno
@@ -41,8 +41,16 @@ public class CounterMenagerRifiuti : MonoBehaviour
                     return false;
                 }
 
+                // --- SE SEI ARRIVATO QUI, SIGNIFICA CHE C'È SPAZIO! ---
                 slot.currentCount += quantity;
                 slot.countText.text = $"{slot.currentCount}/{slot.maxCount}"; // aggiornamento grafica
+
+                // NUOVA RIGA: Riproduce il suono specifico per il tipo di rifiuto raccolto!
+                if (AudioManager.Instance != null)
+                {
+                    AudioManager.Instance.PlayPickupSound(type);
+                }
+
                 return true;
             }
         }
