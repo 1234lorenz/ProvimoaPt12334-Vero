@@ -34,6 +34,9 @@ public class FirstPersonController : MonoBehaviour
     private float verticalRotation;
 
     private float CurrentSpeed => walkSpeed * (playerInputHandler.SprintTrigger ? sprintMultipler : 1) * moltiplicatoreVelocita;
+    public GameObject UiPanelCancello_apri;
+    [Header("AnimationCancello")]
+    public Animator gateAnimator;
 
     void Awake()
     {
@@ -45,6 +48,7 @@ public class FirstPersonController : MonoBehaviour
 
         // Evita movimenti strani della telecamera all'avvio della scena
         Cinemachine.CinemachineCore.Instance.OnTargetObjectWarped(transform, Vector3.zero);
+        UiPanelCancello_apri.SetActive(false);
     }
 
     void Update()
@@ -62,6 +66,12 @@ public class FirstPersonController : MonoBehaviour
         else
         {
             HandleThirdPersonLogic();
+        }
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            bool state = gateAnimator.GetBool("isOpen");
+            gateAnimator.SetBool("isOpen", !state);
         }
     }
 
@@ -164,5 +174,21 @@ public class FirstPersonController : MonoBehaviour
 
         // Riattiva il controller fisico
         characterController.enabled = true;
+    }
+
+    public void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("Cancello"))
+        {
+            UiPanelCancello_apri.SetActive(true);
+        }
+    }
+
+    public void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Cancello"))
+        {
+            UiPanelCancello_apri.SetActive(false);
+        }
     }
 }

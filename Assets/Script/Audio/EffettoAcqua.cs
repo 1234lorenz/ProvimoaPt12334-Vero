@@ -7,7 +7,7 @@ public class EffettoAcqua : MonoBehaviour
 
     [Header("Nebbia di Sfondo (Subacquea)")]
     [SerializeField] private Color coloreNebbiaSubacquea = new Color(0f, 0.2f, 0.4f); // Blu scuro per l'orizzonte
-    [SerializeField] private float distanzaFineNebbia; // Più è bassa, meno  si vede la mappa in lontananza
+    [SerializeField] private float distanzaFineNebbia; // Più è bassa, meno si vede la mappa in lontananza
 
     private bool nebbiaIniziale;
     private Color coloreNebbiaIniziale;
@@ -16,12 +16,21 @@ public class EffettoAcqua : MonoBehaviour
 
     void Start()
     {
-        // Salviamo la nebbia originale del mondoo
-
+        // Salviamo la nebbia originale del mondo
         nebbiaIniziale = RenderSettings.fog;
         coloreNebbiaIniziale = RenderSettings.fogColor;
         fineNebbiaIniziale = RenderSettings.fogEndDistance;
         modalitaNebbiaIniziale = RenderSettings.fogMode;
+
+        // Spegniamo l'effetto ovattato all'avvio del gioco (se presente sulla telecamera)
+        if (Camera.main != null)
+        {
+            AudioLowPassFilter filtro = Camera.main.GetComponent<AudioLowPassFilter>();
+            if (filtro != null)
+            {
+                filtro.enabled = false;
+            }
+        }
     }
 
     private void OnTriggerEnter(Collider other)
@@ -39,6 +48,16 @@ public class EffettoAcqua : MonoBehaviour
                 RenderSettings.fogColor = coloreNebbiaSubacquea;
                 RenderSettings.fogStartDistance = 0f;
                 RenderSettings.fogEndDistance = distanzaFineNebbia;
+
+                // --- NOVITÀ: ATTIVA L'EFFETTO AUDIO OVATTATO ---
+                if (Camera.main != null)
+                {
+                    AudioLowPassFilter filtro = Camera.main.GetComponent<AudioLowPassFilter>();
+                    if (filtro != null)
+                    {
+                        filtro.enabled = true; // Accende il filtro sott'acqua
+                    }
+                }
             }
         }
     }
@@ -57,6 +76,16 @@ public class EffettoAcqua : MonoBehaviour
                 RenderSettings.fogColor = coloreNebbiaIniziale;
                 RenderSettings.fogEndDistance = fineNebbiaIniziale;
                 RenderSettings.fogMode = modalitaNebbiaIniziale;
+
+                // --- NOVITÀ: DISATTIVA L'EFFETTO AUDIO OVATTATO ---
+                if (Camera.main != null)
+                {
+                    AudioLowPassFilter filtro = Camera.main.GetComponent<AudioLowPassFilter>();
+                    if (filtro != null)
+                    {
+                        filtro.enabled = false; // Spegne il filtro, torna l'audio normale
+                    }
+                }
             }
         }
     }
