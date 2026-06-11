@@ -34,9 +34,12 @@ public class FirstPersonController : MonoBehaviour
     private float verticalRotation;
 
     private float CurrentSpeed => walkSpeed * (playerInputHandler.SprintTrigger ? sprintMultipler : 1) * moltiplicatoreVelocita;
+
+    [Header("UI Element")]
     public GameObject UiPanelCancello_apri;
-    [Header("AnimationCancello")]
-    public Animator gateAnimator;
+
+    [Header("AnimationCancello (Automatico)")]
+    public Animator gateAnimator; // Ora si assegna da solo quando ti avvicini!
 
     void Awake()
     {
@@ -68,7 +71,8 @@ public class FirstPersonController : MonoBehaviour
             HandleThirdPersonLogic();
         }
 
-        if (Input.GetKeyDown(KeyCode.T))
+        // Il tasto T funziona solo se sei vicino a un cancello valido
+        if (Input.GetKeyDown(KeyCode.T) && gateAnimator != null)
         {
             bool state = gateAnimator.GetBool("isOpen");
             gateAnimator.SetBool("isOpen", !state);
@@ -83,9 +87,13 @@ public class FirstPersonController : MonoBehaviour
 
     private void HandleJumping()
     {
+        // RIGA FONDAMENTALE: Comunica all'Animator se il giocatore è a terra o in aria
+        animator.SetBool("isGrounded", characterController.isGrounded);
+
         if (characterController.isGrounded)
         {
             currentMovement.y = -0.5f;
+
             if (playerInputHandler.JumpTrigger)
             {
                 currentMovement.y = JumpForce;
@@ -157,38 +165,36 @@ public class FirstPersonController : MonoBehaviour
         characterController.Move(currentMovement * Time.deltaTime);
     }
 
-    // --- NUOVA FUNZIONE PER IL CARICAMENTO DELLA PARTITA ---
     public void Teletrasporta(Vector3 nuovaPosizione)
     {
-        // Disabilita temporaneamente il controller fisico
         characterController.enabled = false;
-
-        // Calcola la distanza tra dove sei e dove devi andare (serve a Cinemachine)
         Vector3 deltaSpostamento = nuovaPosizione - transform.position;
-
-        // Sposta fisicamente il giocatore
         transform.position = nuovaPosizione;
-
-        // Ordina a Cinemachine di saltare istantaneamente per evitare l'effetto "volo"
         Cinemachine.CinemachineCore.Instance.OnTargetObjectWarped(transform, deltaSpostamento);
-
-        // Riattiva il controller fisico
         characterController.enabled = true;
     }
 
+    // Rilevamento dinamico del cancello corrente
     public void OnTriggerEnter(Collider other)
     {
-        if(other.CompareTag("Cancello"))
+        if (other.CompareTag("Cancello"))
         {
             UiPanelCancello_apri.SetActive(true);
+
+            // Va a prendere l'Animator che sta sul Cardine (il padre della staccionata)
+            gateAnimator = other.GetComponentInParent<Animator>();
         }
     }
 
+    // MODIFICA: Reset quando ci allontaniamo
     public void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Cancello"))
         {
             UiPanelCancello_apri.SetActive(false);
+
+            // Svuota il riferimento così non comandi più questo cancello
+            gateAnimator = null;
         }
     }
 }
