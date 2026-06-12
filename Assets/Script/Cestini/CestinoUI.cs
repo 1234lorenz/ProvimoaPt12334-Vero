@@ -13,6 +13,10 @@ public class CestinoUI : MonoBehaviour
     public TMP_InputField quantityInput;
     public TextMeshProUGUI quantityLabel;
 
+    [Header("Messaggio Personalizzato Unity")]
+    [Tooltip("Trascina qui la scritta o il pannello personalizzato che hai creato su Unity")]
+    public GameObject messaggioLimiteUI; // <-- AGGIUNTO: Il tuo oggetto grafico di Unity
+
     [Header("Prompt Interazione Cestino")]
     public GameObject panelCestinoPromptQ;
 
@@ -32,8 +36,6 @@ public class CestinoUI : MonoBehaviour
     public Sprite organicoIcon;
     public Sprite seccoIcon;
 
-   
-
     void Start()
     {
         inventory = FindObjectOfType<CounterMenagerRifiuti>();
@@ -42,6 +44,10 @@ public class CestinoUI : MonoBehaviour
 
         cestinoUIPanel.SetActive(false);
         quantityPanel.SetActive(false);
+
+        // Nasconde la tua scritta personalizzata all'avvio del gioco
+        if (messaggioLimiteUI != null)
+            messaggioLimiteUI.SetActive(false);
     }
 
     void Update()
@@ -81,6 +87,10 @@ public class CestinoUI : MonoBehaviour
         isOpen = true;
         cestinoUIPanel.SetActive(true);
         quantityPanel.SetActive(false);
+
+        if (messaggioLimiteUI != null)
+            messaggioLimiteUI.SetActive(false);
+
         AggiornaSlotsUI();
 
         if (panelCestinoPromptQ != null)
@@ -98,6 +108,9 @@ public class CestinoUI : MonoBehaviour
         cestinoUIPanel.SetActive(false);
         quantityPanel.SetActive(false);
 
+        if (messaggioLimiteUI != null)
+            messaggioLimiteUI.SetActive(false);
+
         if (panelCestinoPromptQ != null && currentCestino != null)
             panelCestinoPromptQ.SetActive(true);
 
@@ -110,6 +123,10 @@ public class CestinoUI : MonoBehaviour
     public void TornaAlMenuIniziale()
     {
         quantityPanel.SetActive(false);
+
+        if (messaggioLimiteUI != null)
+            messaggioLimiteUI.SetActive(false);
+
         AggiornaSlotsUI();
     }
 
@@ -165,6 +182,10 @@ public class CestinoUI : MonoBehaviour
         selectedType = type;
         quantityPanel.SetActive(true);
         slotContainer.gameObject.SetActive(false);
+
+        if (messaggioLimiteUI != null)
+            messaggioLimiteUI.SetActive(false);
+
         quantityInput.text = "";
         quantityLabel.text = $"[Quanti {type} vuoi buttare?]";
         quantityInput.ActivateInputField();
@@ -184,18 +205,16 @@ public class CestinoUI : MonoBehaviour
             return;
         }
 
-        bool eraInEccesso = false; // Ci serve per capire se il gioco ha frenato l'input
+        bool eraInEccesso = false;
 
-        // Controlla quanti ne mancano alla missione ed evita gli sprechi nell'inventario
         if (MissionManager.Instance != null)
         {
             int mancanti = MissionManager.Instance.GetMancanti(selectedType);
 
-            // Se la missione richiede ancora oggetti, e l'utente ne inserisce di più, frena l'input al necessario
             if (mancanti > 0 && quantity > mancanti)
             {
                 quantity = mancanti;
-                eraInEccesso = true; // Ci segniamo che è scattato il limite della missione
+                eraInEccesso = true;
             }
         }
 
@@ -205,43 +224,32 @@ public class CestinoUI : MonoBehaviour
         {
             if (eraInEccesso)
             {
-                // Se era in eccesso, facciamo partire il messaggio visivo temporizzato
                 StartCoroutine(MostraMessaggioLimiteMissione());
             }
             else
             {
-                // Se era tutto normale, chiudiamo subito il pannello come prima
                 quantityPanel.SetActive(false);
                 AggiornaSlotsUI();
             }
         }
     }
 
-    // NUOVA COROUTINE: Mostra il feedback al giocatore e poi chiude la UI
+    // COROUTINE MODIFICATA: Accende e spegne solo la tua UI di Unity
     private IEnumerator MostraMessaggioLimiteMissione()
     {
-        // 1. Prendiamo il "motore di posizionamento" della scritta (il RectTransform)
-        RectTransform rectText = quantityLabel.GetComponent<RectTransform>();
-
-        // 2. Ci salviamo la sua posizione originale per non perderla
-        Vector2 posizioneOriginale = rectText.anchoredPosition;
-
-        // 3. Spostiamo la scritta più in alto (es. +100 pixel sull'asse Y). 
-        // Puoi cambiare 100f con 150f o 200f se la vuoi ancora più in alto!
-        rectText.anchoredPosition = posizioneOriginale + new Vector2(20f, 250f);
-
-        // 4. Cambiamo il testo e lo coloriamo
-        quantityLabel.text = "<color=yellow>Quantità limitata al target di missione,Il resto rimane nello zaino.!";
-        
         quantityInput.interactable = false;
 
-        // Aspettiamo i 2.5 secondi
+        // 1. Accendiamo la scritta/pannello che hai personalizzato nell'editor
+        if (messaggioLimiteUI != null)
+            messaggioLimiteUI.SetActive(true);
+
+        // Aspettiamo i 2.5 secondi a tempo reale (anche se il gioco è in pausa)
         yield return new WaitForSecondsRealtime(2.5f);
 
-        // 5. PRIMA di chiudere, rimettiamo la scritta al suo posto originale
-        rectText.anchoredPosition = posizioneOriginale;
+        // 2. Spegniamo la scritta personalizzata
+        if (messaggioLimiteUI != null)
+            messaggioLimiteUI.SetActive(false);
 
-        // Ripristiniamo tutto il resto
         quantityInput.interactable = true;
         quantityPanel.SetActive(false);
         AggiornaSlotsUI();
