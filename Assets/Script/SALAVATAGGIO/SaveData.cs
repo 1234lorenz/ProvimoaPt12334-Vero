@@ -24,6 +24,7 @@ public class SaveData
     public float playerZ;
     public string dataOra;
     public bool slotOccupato;
+    public bool tutorialCompleto = false; 
 
     // lista ID rifiuti raccolti
     public List<string> rifiutiRaccolti = new List<string>();

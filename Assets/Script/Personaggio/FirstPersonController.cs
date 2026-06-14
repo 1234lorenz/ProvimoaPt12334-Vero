@@ -1,6 +1,8 @@
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class FirstPersonController : MonoBehaviour
 {
@@ -39,7 +41,7 @@ public class FirstPersonController : MonoBehaviour
     public GameObject UiPanelCancello_apri;
 
     [Header("AnimationCancello (Automatico)")]
-    public Animator gateAnimator; // Ora si assegna da solo quando ti avvicini!
+    public Animator gateAnimator;
 
     void Awake()
     {
@@ -49,7 +51,6 @@ public class FirstPersonController : MonoBehaviour
 
         UpdateCameraState();
 
-        // Evita movimenti strani della telecamera all'avvio della scena
         Cinemachine.CinemachineCore.Instance.OnTargetObjectWarped(transform, Vector3.zero);
         UiPanelCancello_apri.SetActive(false);
     }
@@ -71,11 +72,27 @@ public class FirstPersonController : MonoBehaviour
             HandleThirdPersonLogic();
         }
 
-        // Il tasto T funziona solo se sei vicino a un cancello valido
+        // GESTIONE INTEGRATA DEL SUONO SULLA PRESSIONE DEL TASTO T
         if (Input.GetKeyDown(KeyCode.T) && gateAnimator != null)
         {
             bool state = gateAnimator.GetBool("isOpen");
-            gateAnimator.SetBool("isOpen", !state);
+
+            // Invertiamo lo stato logico (se era aperto ora si chiude, e viceversa)
+            bool nuovoStato = !state;
+            gateAnimator.SetBool("isOpen", nuovoStato);
+
+            // Richiamo dei suoni in base alla nuova direzione dell'animazione
+            if (AudioManager.Instance != null)
+            {
+                if (nuovoStato)
+                {
+                    AudioManager.Instance.PlayCancelloApri();
+                }
+                else
+                {
+                    AudioManager.Instance.PlayCancelloChiudi();
+                }
+            }
         }
     }
 
@@ -87,7 +104,6 @@ public class FirstPersonController : MonoBehaviour
 
     private void HandleJumping()
     {
-        // RIGA FONDAMENTALE: Comunica all'Animator se il giocatore è a terra o in aria
         animator.SetBool("isGrounded", characterController.isGrounded);
 
         if (characterController.isGrounded)
@@ -108,6 +124,9 @@ public class FirstPersonController : MonoBehaviour
 
     private void HandleThirdPersonLogic()
     {
+        // Se il gioco è congelato, blocca la visuale e il movimento
+        if (Time.timeScale == 0f) return;
+
         Vector3 camForward = mainCamera.transform.forward;
         Vector3 camRight = mainCamera.transform.right;
         camForward.y = 0;
@@ -138,6 +157,9 @@ public class FirstPersonController : MonoBehaviour
 
     private void HandleFirstPersonLogic()
     {
+        // Se il gioco è congelato, blocca la visuale e il movimento
+        if (Time.timeScale == 0f) return;
+
         float mouseXRotation = playerInputHandler.RotationInput.x * mouseSesitivity;
         float mouseYRotation = playerInputHandler.RotationInput.y * mouseSesitivity;
 
@@ -174,26 +196,20 @@ public class FirstPersonController : MonoBehaviour
         characterController.enabled = true;
     }
 
-    // Rilevamento dinamico del cancello corrente
     public void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Cancello"))
         {
             UiPanelCancello_apri.SetActive(true);
-
-            // Va a prendere l'Animator che sta sul Cardine (il padre della staccionata)
             gateAnimator = other.GetComponentInParent<Animator>();
         }
     }
 
-    // MODIFICA: Reset quando ci allontaniamo
     public void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Cancello"))
         {
             UiPanelCancello_apri.SetActive(false);
-
-            // Svuota il riferimento così non comandi più questo cancello
             gateAnimator = null;
         }
     }

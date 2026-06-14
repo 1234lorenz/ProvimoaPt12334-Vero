@@ -15,9 +15,17 @@ public class GeneratoreZona : MonoBehaviour
     [Header("COSA DEVE COLPIRE IL RAGGIO?")]
     public LayerMask stratoDaColpire;
 
-    [Header("REGOLAZIONE ALTEZZA")]
-    [Tooltip("Alza gli oggetti rispetto al terreno per non farli affondare (es: 0.1 o 0.2)")]
-    public float offsetAltezza = 0.1f; // <--- NUOVO: Regolalo dall'Inspector!
+    [Header("REGOLAZIONE FISICA EXTRA (NUOVO)")]
+    [Tooltip("Altezza da cui far CASCARE l'oggetto")]
+    public float altezzaCaduta = 2.5f;
+
+    [Range(0f, 10f)]
+    [Tooltip("Forza casuale che spinge l'oggetto di lato appena nasce per farlo rotolare di più")]
+    public float spintaCasualeMassima = 5f;
+
+    [Range(0f, 50f)]
+    [Tooltip("Effetto 'trottola': quanto forte l'oggetto deve girare su se stesso a mezz'aria")]
+    public float rotazioneFisicaMassima = 20f;
 
     [ContextMenu("Genera Rifiuti In Questa Zona")]
     public void Spargi()
@@ -42,17 +50,36 @@ public class GeneratoreZona : MonoBehaviour
             {
                 GameObject prefabScelto = prefabsRifiuti[Random.Range(0, prefabsRifiuti.Length)];
 
-                // LA MODIFICA: Prende il punto del terreno e lo sposta un pochino verso l'alto (Vector3.up)
-                Vector3 posizioneSollevata = colpo.point + (Vector3.up * offsetAltezza);
+                Vector3 posizioneAria = colpo.point + (Vector3.up * altezzaCaduta);
 
-                GameObject rifiuto = Instantiate(prefabScelto, posizioneSollevata, Quaternion.Euler(0, Random.Range(0, 360), 0));
+                // 1. Rotazione visiva di partenza totalmente imprevedibile
+                Quaternion rotazioneCasuale = Random.rotation;
 
+                GameObject rifiuto = Instantiate(prefabScelto, posizioneAria, rotazioneCasuale);
                 rifiuto.transform.parent = this.transform;
                 generati++;
+
+                // 2. MAGIA DELLA FISICA EXTRA: Diamo una spinta reale al Rigidbody se presente
+                Rigidbody rb = rifiuto.GetComponent<Rigidbody>();
+                if (rb != null)
+                {
+                    // Crea una direzione di lancio a caso (escludendo l'asse Y per non spararli in alto)
+                    Vector3 direzioneLancio = new Vector3(Random.Range(-1f, 1f), 0f, Random.Range(-1f, 1f)).normalized;
+                    float forzaLancio = Random.Range(0f, spintaCasualeMassima);
+
+                    // Applica la spinta laterale iniziale
+                    rb.AddForce(direzioneLancio * forzaLancio, ForceMode.Impulse);
+
+                    // Crea un effetto trottola casuale su tutti gli assi
+                    Vector3 coppiaRotazione = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * Random.Range(0f, rotazioneFisicaMassima);
+
+                    // Applica la rotazione fisica interna
+                    rb.AddTorque(coppiaRotazione, ForceMode.Impulse);
+                }
             }
         }
 
-        Debug.Log("Fatto! Ho posizionato correttamente a terra " + generati + " oggetti.");
+        Debug.Log("Fatto! Generati " + generati + " oggetti con fisica ultra-caotica.");
     }
 
     private void OnDrawGizmosSelected()

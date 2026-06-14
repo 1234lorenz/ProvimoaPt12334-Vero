@@ -11,6 +11,9 @@ public class SaveManager : MonoBehaviour
     private const int NUM_SLOTS = 6;
     public int slotDaCaricare = -1;
 
+    // Supporto per far leggere lo stato del tutorial al TutorialManager
+    [HideInInspector] public SaveData datiCaricati;
+
     void Awake()
     {
         if (Instance == null)
@@ -44,6 +47,17 @@ public class SaveManager : MonoBehaviour
         data.vetroCompleto = MissionManager.Instance.vetroCompleto;
         data.metalloCompleto = MissionManager.Instance.metalloCompleto;
         data.cestiniSmaltiti = MissionManager.Instance.cestiniSmaltiti;
+
+        // Salva lo stato del tutorial attuale!
+        if (TutorialManager.Instance != null)
+        {
+            data.tutorialCompleto = (TutorialManager.Instance.faseAttuale == TutorialManager.Fase.Finito);
+        }
+        else
+        {
+            // Se il TutorialManager non esiste più nella scena, significa che è già stato completato e distrutto
+            data.tutorialCompleto = true;
+        }
 
         // Rifiuti raccolti (rimossi dal mondo)
         data.rifiutiRaccolti = RifiutiManager.Instance.GetRifiutiRaccolti();
@@ -93,6 +107,9 @@ public class SaveManager : MonoBehaviour
         SaveData data = (SaveData)bf.Deserialize(file);
         file.Close();
 
+        // Teniamo traccia dei dati appena letti in memoria
+        datiCaricati = data;
+
         // applica XP e livello
         XPManager.Instance.currentXP = data.currentXP;
         XPManager.Instance.currentLevel = data.currentLevel;
@@ -119,12 +136,10 @@ public class SaveManager : MonoBehaviour
             FirstPersonController fpc = player.GetComponent<FirstPersonController>();
             if (fpc != null)
             {
-                // Chiama la funzione che teletrasporta Player + Cinemachine insieme
                 fpc.Teletrasporta(posizioneSalvata);
             }
             else
             {
-                // Sistema di sicurezza nel caso lo script non venga trovato
                 player.transform.position = posizioneSalvata;
             }
         }
@@ -147,7 +162,6 @@ public class SaveManager : MonoBehaviour
         Debug.Log($"Caricato slot {slot}!");
     }
 
-    // elimina slot
     public void Elimina(int slot)
     {
         string path = savePath + slot + ".dat";
@@ -158,13 +172,11 @@ public class SaveManager : MonoBehaviour
         }
     }
 
-    // controlla se lo slot contiene file
     public bool SlotOccupato(int slot)
     {
         return File.Exists(savePath + slot + ".dat");
     }
 
-    // legge i dati di uno slot senza caricarli (serve per mostrare le info nel menù)
     public SaveData LeggiSlot(int slot)
     {
         string path = savePath + slot + ".dat";

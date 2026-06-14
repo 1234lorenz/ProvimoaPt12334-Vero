@@ -20,12 +20,13 @@ public class FadeIn : MonoBehaviour
         float tempo = 0f;
         while (tempo < fadeDuration)
         {
-            tempo += Time.deltaTime;
+            tempo += Time.unscaledDeltaTime;
             fadePanel.color = new Color(0, 0, 0, 1 - tempo / fadeDuration);
             yield return null;
         }
 
         // completamente trasparente
         fadePanel.color = new Color(0, 0, 0, 0);
+        fadePanel.gameObject.SetActive(false); // Disattiva per sicurezza
     }
 }

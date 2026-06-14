@@ -218,10 +218,17 @@ public class CestinoUI : MonoBehaviour
             }
         }
 
+        // Qui il cestino accetta il rifiuto...
         bool success = currentCestino.TryDeposit(selectedType, quantity, inventory);
 
         if (success)
         {
+            //Riproduce lo stesso suono del rifiuto specifico (Plastica, Vetro, ecc...)
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayPickupSound(selectedType);
+            }
+
             if (eraInEccesso)
             {
                 StartCoroutine(MostraMessaggioLimiteMissione());

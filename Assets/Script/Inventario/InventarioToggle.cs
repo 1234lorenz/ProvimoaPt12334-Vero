@@ -23,6 +23,12 @@ public class InventarioToggle : MonoBehaviour
             bool isOpen = inventarioPanel.activeSelf;
             inventarioPanel.SetActive(!isOpen);
 
+            // Se l'inventario si è APERTO (!isOpen significa che prima era chiuso)
+            if (!isOpen && TutorialManager.Instance != null)
+            {
+                TutorialManager.Instance.OnInventarioAperto();
+            }
+
             // blocca/sblocca cursore
             if (!isOpen)
             {

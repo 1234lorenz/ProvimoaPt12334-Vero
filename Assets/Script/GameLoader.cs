@@ -5,7 +5,16 @@ public class GameLoader : MonoBehaviour
 {
     void Start()
     {
-        Time.timeScale = 1f;
+        // Non forzare il tempo a 1 se c'è un TutorialManager nella scena.
+        // Se non c'è il tutorial, allora ripristiniamo il tempo normale.
+        if (TutorialManager.Instance == null)
+        {
+            Time.timeScale = 1f;
+        }
+        else
+        {
+            Debug.Log("GameLoader: Il Tutorial è presente, lascio a lui la gestione del tempo.");
+        }
 
         // FORZIAMO il nero subito, prima ancora che il gioco disegni il primo frame
         if (FadeManager.Instance != null && FadeManager.Instance.fadePanel != null)

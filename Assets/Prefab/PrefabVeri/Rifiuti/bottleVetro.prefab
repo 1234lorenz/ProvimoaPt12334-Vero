@@ -105,6 +105,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 2164156415211155345}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e9be9bd34a4f26c4d8aa7187b6d9c92e,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -4003737834959122052}
   m_SourcePrefab: {fileID: 100100000, guid: e9be9bd34a4f26c4d8aa7187b6d9c92e, type: 3}
 --- !u!1 &8763188759865788554 stripped
 GameObject:
@@ -127,8 +131,8 @@ MonoBehaviour:
   type: 3
   rifiutoID: BottigliaDivetro
   quantita: 1
-  outlineColor: {r: 0.9622642, g: 0.09531862, b: 0.09531862, a: 1}
-  outlineWidth: 1.4
+  outlineColor: {r: 0.85882354, g: 0.11764706, b: 0.72156864, a: 1}
+  outlineWidth: 10
 --- !u!65 &2164156415211155345
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -150,3 +154,30 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.021546816, y: 0.021546813, z: 0.0827724}
   m_Center: {x: 0, y: 2.9421557e-16, z: 0.04140715}
+--- !u!54 &-4003737834959122052
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8763188759865788554}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

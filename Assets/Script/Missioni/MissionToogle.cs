@@ -21,6 +21,12 @@ public class MissionToggle : MonoBehaviour
             bool isOpen = missionPanel.activeSelf;
             missionPanel.SetActive(!isOpen);
 
+            // Se il pannello missioni si è APERTO
+            if (!isOpen && TutorialManager.Instance != null)
+            {
+                TutorialManager.Instance.OnMissioniAperte();
+            }
+
             if (!isOpen)
             {
                 Cursor.lockState = CursorLockMode.None;

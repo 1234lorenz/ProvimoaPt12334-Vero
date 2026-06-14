@@ -54,7 +54,7 @@ public class FadeManager : MonoBehaviour
         float tempo = 0f;
         while (tempo < fadeDuration)
         {
-            tempo += Time.deltaTime;
+            tempo += Time.unscaledDeltaTime;
             fadePanel.color = new Color(0, 0, 0, 1f - (tempo / fadeDuration));
             yield return null;
         }

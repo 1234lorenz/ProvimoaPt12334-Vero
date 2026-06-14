@@ -51,6 +51,13 @@ public class CounterMenagerRifiuti : MonoBehaviour
                     AudioManager.Instance.PlayPickupSound(type);
                 }
 
+                //AGGIUNTA PER IL TUTORIAL:
+                // Se il tutorial è attivo, avvisiamo che il primo rifiuto è stato raccolto con successo!
+                if (TutorialManager.Instance != null)
+                {
+                    TutorialManager.Instance.OnRifiutoRaccolto();
+                }
+
                 return true;
             }
         }
