@@ -1,32 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class CameraSheke : MonoBehaviour
 {
-    [SerializeField] private float Durata_shake;
-    [SerializeField] private float intensita_shake;
+    [Header("Intensità Shake")]
+    [SerializeField] private float intensitaShake = 0.5f;
 
+    private CinemachineImpulseSource impulseSource;
 
-
-    public IEnumerator Shake()
+    void Awake()
     {
-        Vector3 position = transform.localPosition;
-        float Tempo_partenza = Time.unscaledTime;
-
-        while (Time.unscaledTime - Tempo_partenza < Durata_shake)
-        {
-            transform.localPosition = position + new Vector3(
-                Random.Range(-intensita_shake, intensita_shake),
-                Random.Range(-intensita_shake, intensita_shake),
-                0);
-            yield return null;
-        }
-
-        transform.localPosition = position;
+        impulseSource = GetComponent<CinemachineImpulseSource>();
     }
 
+    public void Shake()
+    {
+        if (impulseSource != null)
+            impulseSource.GenerateImpulse(intensitaShake);
+    }
 }
-
-
-

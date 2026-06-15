@@ -97,7 +97,7 @@ public class CestinoUI : MonoBehaviour
             panelCestinoPromptQ.SetActive(false);
 
         playerController.enabled = false;
-        Time.timeScale = 0f;
+        //Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
@@ -218,12 +218,10 @@ public class CestinoUI : MonoBehaviour
             }
         }
 
-        // Qui il cestino accetta il rifiuto...
         bool success = currentCestino.TryDeposit(selectedType, quantity, inventory);
 
         if (success)
         {
-            //Riproduce lo stesso suono del rifiuto specifico (Plastica, Vetro, ecc...)
             if (AudioManager.Instance != null)
             {
                 AudioManager.Instance.PlayPickupSound(selectedType);
@@ -239,6 +237,8 @@ public class CestinoUI : MonoBehaviour
                 AggiornaSlotsUI();
             }
         }
+        // se success è false (cestino sbagliato), TryDeposit ha già fatto shake + penalità XP
+        // il pannello resta apertissimo così il giocatore può riprovare con il tipo giusto
     }
 
     // COROUTINE MODIFICATA: Accende e spegne solo la tua UI di Unity

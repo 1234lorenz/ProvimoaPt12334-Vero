@@ -27,14 +27,35 @@ public class GeneratoreZona : MonoBehaviour
     [Tooltip("Effetto 'trottola': quanto forte l'oggetto deve girare su se stesso a mezz'aria")]
     public float rotazioneFisicaMassima = 20f;
 
+    // --- NUOVO: Questo fa partire la pioggia di rifiuti da sola appena avvii il gioco! ---
+    private void Awake()
+    {
+        Spargi(false);
+    }
+
+    // Ho aggiunto un parametro "svuotaPrima". 
+    // Se premiamo a mano nell'editor svuota la zona, all'avvio del gioco no (per sicurezza).
     [ContextMenu("Genera Rifiuti In Questa Zona")]
-    public void Spargi()
+    public void SpargiEditor()
+    {
+        Spargi(true);
+    }
+
+    public void Spargi(bool svuotaPrima)
     {
         transform.localScale = Vector3.one;
 
-        for (int i = transform.childCount - 1; i >= 0; i--)
+        // Svuota i vecchi figli solo se lo abbiamo chiesto esplicitamente (utile in Editor)
+        if (svuotaPrima)
         {
-            DestroyImmediate(transform.GetChild(i).gameObject);
+            for (int i = transform.childCount - 1; i >= 0; i--)
+            {
+                // In gioco si usa Destroy, in Editor si usa DestroyImmediate
+                if (Application.isPlaying)
+                    Destroy(transform.GetChild(i).gameObject);
+                else
+                    DestroyImmediate(transform.GetChild(i).gameObject);
+            }
         }
 
         int generati = 0;
@@ -79,7 +100,7 @@ public class GeneratoreZona : MonoBehaviour
             }
         }
 
-        Debug.Log("Fatto! Generati " + generati + " oggetti con fisica ultra-caotica.");
+        Debug.Log("Fatto! Generati " + generati + " oggetti con fisica ultra-caotica in questa zona.");
     }
 
     private void OnDrawGizmosSelected()

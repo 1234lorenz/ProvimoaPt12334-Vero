@@ -1,5 +1,5 @@
 using UnityEngine;
-using System.Collections; //  AGGIUNTO per usare le attese (Coroutine)
+using System.Collections;
 
 public class TutorialManager : MonoBehaviour
 {
@@ -21,37 +21,33 @@ public class TutorialManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    //  MODIFICA: Ora Start è un IEnumerator, così può ASPETTARE!
     IEnumerator Start()
     {
-        DisattivaTuttiIPannelli(); // Spegniamo la UI per sicurezza mentre aspettiamo
+        DisattivaTuttiIPannelli();
 
-        // 1. Stiamo caricando una partita? (slotDaCaricare è diverso da -1 se stiamo caricando)
+        // 1. Stiamo caricando una partita?
         if (SaveManager.Instance != null && SaveManager.Instance.slotDaCaricare != -1)
         {
             Debug.Log("TutorialManager: Sto aspettando che il GameLoader carichi il salvataggio...");
 
-            // Aspetta finché il SaveManager non finisce il caricamento (e rimette lo slot a -1)
             yield return new WaitUntil(() => SaveManager.Instance.slotDaCaricare == -1);
-
-            // Aspettiamo un altro micro-secondo per sicurezza
             yield return new WaitForSeconds(0.1f);
         }
 
-        // 2. ORA il GameLoader ha sicuramente finito di caricare i dati! Controlliamo:
+        // 2. Controlliamo se il tutorial era già completato
         if (SaveManager.Instance != null && SaveManager.Instance.datiCaricati != null)
         {
             if (SaveManager.Instance.datiCaricati.tutorialCompleto)
             {
                 Debug.Log(" [TUTORIAL] Salvataggio rilevato con tutorial completato. Mi distruggo.");
                 faseAttuale = Fase.Finito;
-                Time.timeScale = 1f; // Assicura che il tempo non resti congelato
-                Destroy(gameObject); // Elimina il tutorial
-                yield break; // Ferma questo script qui, non andare oltre
+                BloccaGiocatore(false);
+                Destroy(gameObject);
+                yield break;
             }
         }
 
-        // 3. Se arriviamo qui, significa che è una Nuova Partita o il tutorial non era finito.
+        // 3. Nuova partita o tutorial non completato
         AvviaFase(Fase.Intro);
     }
 
@@ -73,32 +69,50 @@ public class TutorialManager : MonoBehaviour
         switch (faseAttuale)
         {
             case Fase.Intro:
-                Time.timeScale = 0f;
+                BloccaGiocatore(true);
                 panelIntro.SetActive(true);
                 break;
             case Fase.Movimento:
+                BloccaGiocatore(false);
                 panelMovimento.SetActive(true);
                 break;
             case Fase.CercaRifiuto:
-                Time.timeScale = 1f;
+                BloccaGiocatore(false);
                 break;
             case Fase.SpiegaRifiuto:
-                Time.timeScale = 0f;
+                BloccaGiocatore(true);
                 panelRifiuto.SetActive(true);
                 break;
             case Fase.Raccogli:
-                Time.timeScale = 1f;
+                BloccaGiocatore(false);
                 break;
             case Fase.ApriInventario:
-                Time.timeScale = 0f;
+                BloccaGiocatore(true);
                 panelInventario.SetActive(true);
                 break;
             case Fase.ApriMissioni:
                 panelMissioni.SetActive(true);
                 break;
             case Fase.Finito:
-                Time.timeScale = 1f;
+                BloccaGiocatore(false);
                 break;
+        }
+    }
+
+    private void BloccaGiocatore(bool blocca)
+    {
+        var player = FindObjectOfType<FirstPersonController>();
+        if (player != null) player.enabled = !blocca;
+
+        if (blocca)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
     }
 

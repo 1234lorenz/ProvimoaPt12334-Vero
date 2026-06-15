@@ -9,31 +9,34 @@ public class Cestino : MonoBehaviour
 
     [Header("Errore cestino sbagliato")]
     public int puntiEcoPenalita = 10;
-    public TextMeshProUGUI errorMessage;// testo "Cestino sbagliato!"
+    public TextMeshProUGUI errorMessage;
     public float errorDuration = 2f;
 
     private CameraSheke cameraShake;
+    private CestinoCapacity capacity;
     private Coroutine errorCoroutine;
 
     void Start()
     {
         cameraShake = FindObjectOfType<CameraSheke>();
+        capacity = GetComponent<CestinoCapacity>(); // preso una sola volta invece che ogni TryDeposit
     }
 
     public bool TryDeposit(RIFIUTIType type, int quantity, CounterMenagerRifiuti inventory)
     {
         if (type != acceptedType)
         {
-            // cestino sbagliato!
             StartCoroutine(ShowError());
-            cameraShake.StartCoroutine(cameraShake.Shake());
-            XPManager.Instance.AddXP(-puntiEcoPenalita); // togli punti eco
+
+            if (cameraShake != null)
+                cameraShake.Shake();
+
+            XPManager.Instance.AddXP(-puntiEcoPenalita);
             Debug.Log($"Cestino sbagliato! -{puntiEcoPenalita} Punti Eco");
             return false;
         }
 
-        CestinoCapacity capacity = GetComponent<CestinoCapacity>();
-        int oggettiDepositatiEffettivamente = 0; // NUOVO: Teniamo il conto di quanti ne entrano
+        int oggettiDepositatiEffettivamente = 0;
 
         if (capacity != null)
         {
@@ -43,21 +46,17 @@ public class Cestino : MonoBehaviour
                 return false;
             }
 
-            // Proviamo a buttare la quantità richiesta
             for (int i = 0; i < quantity; i++)
             {
                 if (!capacity.AddItem())
-                {
-                    break; // Il cestino si è riempito a metà dell'opera, ci fermiamo!
-                }
-                oggettiDepositatiEffettivamente++; // È entrato, aumentiamo il conto!
+                    break;
+
+                oggettiDepositatiEffettivamente++;
             }
         }
 
-        // Se siamo riusciti a buttare almeno un oggetto
         if (oggettiDepositatiEffettivamente > 0)
         {
-            // Rimuoviamo dall'inventario SOLO il numero di oggetti che sono entrati davvero!
             inventory.RemoveTrash(type, oggettiDepositatiEffettivamente);
             MissionManager.Instance.OnSmaltimento(type, oggettiDepositatiEffettivamente);
             return true;
@@ -75,7 +74,7 @@ public class Cestino : MonoBehaviour
         {
             errorMessage.gameObject.SetActive(true);
             errorMessage.text = "Cestino sbagliato!";
-            yield return new WaitForSecondsRealtime(errorDuration); 
+            yield return new WaitForSecondsRealtime(errorDuration);
             errorMessage.gameObject.SetActive(false);
         }
     }

@@ -10,6 +10,13 @@ public class PlayerFootsteps : MonoBehaviour
 
     [Header("Configurazione Acqua")]
     public float raggioRadarAcqua = 1.5f;
+    [Tooltip("Imposta questo SOLO sul layer dell'acqua per evitare controlli inutili su tutta la scena")]
+    public LayerMask layerAcqua;
+
+    [Header("Performance")]
+    [Tooltip("Ogni quanti secondi controllare acqua/terreno sotto i piedi")]
+    public float checkInterval = 0.1f;
+    private float checkTimer = 0f;
 
     [Header("Tasti")]
     public KeyCode tastoCorsa = KeyCode.LeftShift;
@@ -38,17 +45,23 @@ public class PlayerFootsteps : MonoBehaviour
         float velocitaReale = spostamento.magnitude / Time.deltaTime;
         posizionePrecedente = transform.position;
 
-        // Controlliamo l'acqua
-        bool seiDentroLacqua = ControllaPresenzaAcqua();
+        // controlla acqua/terreno solo ogni checkInterval secondi, non ogni frame
+        checkTimer += Time.deltaTime;
+        if (checkTimer >= checkInterval)
+        {
+            checkTimer = 0f;
 
-        if (seiDentroLacqua)
-        {
-            isGrounded = true;
-            superficieAttuale = SuperficieType.Acqua;
-        }
-        else
-        {
-            ControllaSuoloTramiteLaser();
+            bool seiDentroLacqua = ControllaPresenzaAcqua();
+
+            if (seiDentroLacqua)
+            {
+                isGrounded = true;
+                superficieAttuale = SuperficieType.Acqua;
+            }
+            else
+            {
+                ControllaSuoloTramiteLaser();
+            }
         }
 
         if (!isGrounded) return;
@@ -75,44 +88,31 @@ public class PlayerFootsteps : MonoBehaviour
 
     private bool ControllaPresenzaAcqua()
     {
-        Collider[] collidersVicini = Physics.OverlapSphere(transform.position, raggioRadarAcqua);
-
-        // Se il radar trova oggetti ma nessuno è l'acqua, questo ci aiuterà a capire
-        foreach (var col in collidersVicini)
-        {
-            if (col.CompareTag("Acqua"))
-            {
-                // MESSAGGIO IN CONSOLE: Se leggi questo, il radar funziona!
-                Debug.Log("<color=cyan><b>[RADAR] Acqua rilevata correttamente!</b></color>");
-                return true;
-            }
-        }
-        return false;
+        // usa LayerMask: controlla SOLO i collider del layer Acqua, non tutta la scena
+        Collider[] collidersVicini = Physics.OverlapSphere(transform.position, raggioRadarAcqua, layerAcqua);
+        return collidersVicini.Length > 0;
     }
 
     private void ControllaSuoloTramiteLaser()
     {
         RaycastHit hit;
-        // Spariamo il laser verso il basso
         if (Physics.Raycast(transform.position, Vector3.down, out hit, distanzaDalSuolo))
         {
             isGrounded = true;
 
-            // Se colpiamo il Terrain (la mappa di Unity)
             Terrain terrainColpito = hit.collider.GetComponent<Terrain>();
             if (terrainColpito != null)
             {
                 superficieAttuale = GetTerrenoSottoIPiedi(terrainColpito, hit.point);
             }
-            // SE INVECE COLPIAMO UN OGGETTO 3D (Come i Ponti!)
             else
             {
                 string tagOggetto = hit.collider.tag;
 
                 if (tagOggetto == "Sabbia") superficieAttuale = SuperficieType.Sabbia;
                 else if (tagOggetto == "Roccia") superficieAttuale = SuperficieType.Roccia;
-                else if (tagOggetto == "Ponte") superficieAttuale = SuperficieType.Ponte; 
-                else superficieAttuale = SuperficieType.Erba; // Suono di riserva se non ha tag
+                else if (tagOggetto == "Ponte") superficieAttuale = SuperficieType.Ponte;
+                else superficieAttuale = SuperficieType.Erba;
             }
         }
         else

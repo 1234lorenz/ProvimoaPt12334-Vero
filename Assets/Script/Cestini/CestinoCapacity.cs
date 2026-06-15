@@ -7,7 +7,7 @@ public class CestinoCapacity : MonoBehaviour
     [Header("Impostazioni")]
     public int maxCapacity;
     public int itemsPerSack;
-    public float distanzaInterazione = 4f; //Distanza massima per poter svuotare il cestino
+    public float distanzaInterazione = 4f;
 
     [Header("Riferimenti")]
     public GameObject sackPrefab;
@@ -21,14 +21,17 @@ public class CestinoCapacity : MonoBehaviour
 
     public int currentCount = 0;
     private bool isFull = false;
+    private bool isSvuotando = false; // NUOVO: Impedisce alla UI di glitchare durante lo smaltimento
     private System.Collections.Generic.List<GameObject> sacks = new System.Collections.Generic.List<GameObject>();
-    private Transform player; // NUOVO: Riferimento al giocatore
+    private Transform player;
+    private Cestino cestino;
 
     void Start()
     {
-        // Trova il giocatore all'avvio
         GameObject p = GameObject.FindWithTag("Player");
         if (p != null) player = p.transform;
+
+        cestino = GetComponent<Cestino>();
     }
 
     public bool AddItem()
@@ -37,16 +40,11 @@ public class CestinoCapacity : MonoBehaviour
 
         currentCount++;
 
-        // ogni itemsPerSack oggetti spawna un sacco
         if (currentCount % itemsPerSack == 0)
             SpawnSack();
 
-        // cestino pieno?
         if (currentCount >= maxCapacity)
-        {
             isFull = true;
-            //  NON accendiamo più la scritta qui, ci pensa l'Update se sei vicino!
-        }
 
         return true;
     }
@@ -62,57 +60,66 @@ public class CestinoCapacity : MonoBehaviour
 
     void Update()
     {
-        // NUOVO: Controllo distanza per la UI e l'Input
-        if (isFull && player != null)
+        if (player == null) return;
+
+        // Se il cestino non è pieno, o se stiamo già facendo l'animazione di svuotamento,
+        // spegniamo la scritta (se attiva) e usciamo subito.
+        if (!isFull || isSvuotando)
         {
-            // Calcola la distanza tra il cestino e il Player
-            float distanza = Vector3.Distance(transform.position, player.position);
+            if (fullMessage != null && fullMessage.gameObject.activeSelf)
+                fullMessage.gameObject.SetActive(false);
+            return;
+        }
 
-            if (distanza <= distanzaInterazione)
-            {
-                // Mostra la scritta solo se sei vicino
-                if (fullMessage != null && !fullMessage.gameObject.activeSelf)
-                {
-                    fullMessage.gameObject.SetActive(true);
-                    // Prova a recuperare il tipo di cestino (se hai uno script Cestino attaccato)
-                    Cestino cestino = GetComponent<Cestino>();
-                    string tipo = (cestino != null) ? cestino.acceptedType.ToString() : "";
-                    fullMessage.text = $"Cestino {tipo} pieno!\nPremi {smaltimentoKey} per smaltire";
-                }
+        // Controlliamo la distanza ogni frame per rendere l'interazione fluidissima
+        float distanza = Vector3.Distance(transform.position, player.position);
 
-                // Permetti lo smaltimento solo se sei vicino
-                if (Input.GetKeyDown(smaltimentoKey))
-                    StartCoroutine(Smaltimento());
-            }
-            else
+        if (distanza <= distanzaInterazione)
+        {
+            // Mostra la scritta solo se non è già visibile
+            if (fullMessage != null && !fullMessage.gameObject.activeSelf)
             {
-                // Se ti allontani troppo, nascondi la scritta
-                if (fullMessage != null && fullMessage.gameObject.activeSelf)
-                {
-                    fullMessage.gameObject.SetActive(false);
-                }
+                fullMessage.gameObject.SetActive(true);
+                string tipo = (cestino != null) ? cestino.acceptedType.ToString() : "";
+                fullMessage.text = $"Cestino {tipo} pieno!\nPremi {smaltimentoKey} per smaltire";
             }
+
+            // ORA il tasto F risponde istantaneamente ad ogni singola pressione!
+            if (Input.GetKeyDown(smaltimentoKey))
+            {
+                StartCoroutine(Smaltimento());
+            }
+        }
+        else
+        {
+            // Se il giocatore si allontana, spegne la scritta
+            if (fullMessage != null && fullMessage.gameObject.activeSelf)
+                fullMessage.gameObject.SetActive(false);
         }
     }
 
     private IEnumerator Smaltimento()
     {
+        isSvuotando = true; // Blocca l'Update ed evita che la scritta si riaccenda
+
         if (smaltimentoFX != null)
             smaltimentoFX.Play();
 
-        // Spegni subito la scritta appena premi il tasto
         if (fullMessage != null)
-            fullMessage.gameObject.SetActive(false);
+            fullMessage.gameObject.SetActive(false); // Spegne definitivamente la scritta
 
         yield return new WaitForSeconds(0.5f);
+
         MissionManager.Instance.OnCestinoSmaltito();
 
         foreach (var sack in sacks)
             Destroy(sack);
-        sacks.Clear();
 
+        sacks.Clear();
         currentCount = 0;
         isFull = false;
+
+        isSvuotando = false; // Sblocco finale: il cestino torna a funzionare normalmente
     }
 
     public bool IsFull()

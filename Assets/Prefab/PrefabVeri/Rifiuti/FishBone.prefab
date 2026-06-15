@@ -158,6 +158,16 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 690216035863838505}
     m_Modifications:
+    - target: {fileID: 49616235490391385, guid: 89c5c885a77072a4eb5395e5aa66a4bb,
+        type: 3}
+      propertyPath: ShapeModule.type
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 49616235490391385, guid: 89c5c885a77072a4eb5395e5aa66a4bb,
+        type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2182808550749428836, guid: 89c5c885a77072a4eb5395e5aa66a4bb,
         type: 3}
       propertyPath: m_Name
@@ -251,7 +261,7 @@ PrefabInstance:
     - target: {fileID: 7362171941115002250, guid: 89c5c885a77072a4eb5395e5aa66a4bb,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.52
+      value: 0.437
       objectReference: {fileID: 0}
     - target: {fileID: 7362171941115002250, guid: 89c5c885a77072a4eb5395e5aa66a4bb,
         type: 3}

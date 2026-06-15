@@ -51,7 +51,7 @@ public class FirstPersonController : MonoBehaviour
 
         UpdateCameraState();
 
-        Cinemachine.CinemachineCore.Instance.OnTargetObjectWarped(transform, Vector3.zero);
+        //Cinemachine.CinemachineCore.Instance.OnTargetObjectWarped(transform, Vector3.zero);
         UiPanelCancello_apri.SetActive(false);
     }
 

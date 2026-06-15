@@ -17,43 +17,34 @@ public class RIFIUTI : MonoBehaviour
 
     private Outline outline;
 
-    void Awake()
-    {
-        // 1. Troviamo le particelle
-        ParticleSystem[] particelle = GetComponentsInChildren<ParticleSystem>();
-        List<GameObject> disattivatiInAwake = new List<GameObject>();
-
-        // 2. Spegniamo le particelle SOLO all'avvio (Awake viene letto 1 sola volta)
-        foreach (ParticleSystem ps in particelle)
-        {
-            if (ps.gameObject.activeSelf)
-            {
-                ps.gameObject.SetActive(false);
-                disattivatiInAwake.Add(ps.gameObject);
-            }
-        }
-
-        // 3. Creiamo l'outline sulla lisca, che ora "registrerà" solo i modelli 3D e non il fumo
-        outline = gameObject.AddComponent<Outline>();
-        outline.OutlineColor = outlineColor;
-        outline.OutlineWidth = outlineWidth;
-        outline.enabled = false;
-
-        // 4. Riaccendiamo le particelle per sempre
-        foreach (GameObject go in disattivatiInAwake)
-        {
-            go.SetActive(true);
-        }
-    }
-
     public void SetOutline(bool active)
     {
-        // Se l'outline esiste e sta cambiando stato rispetto a prima
-        if (outline != null && outline.enabled != active)
+        // crea l'outline solo la prima volta che serve davvero
+        if (active && outline == null)
         {
-            // Lo accendiamo o spegniamo normalmente senza più toccare le particelle!
-            outline.enabled = active;
+            // gestione particelle: spegniamo temporaneamente per non farle "registrare" nell'outline
+            ParticleSystem[] particelle = GetComponentsInChildren<ParticleSystem>();
+            List<GameObject> disattivati = new List<GameObject>();
+
+            foreach (ParticleSystem ps in particelle)
+            {
+                if (ps.gameObject.activeSelf)
+                {
+                    ps.gameObject.SetActive(false);
+                    disattivati.Add(ps.gameObject);
+                }
+            }
+
+            outline = gameObject.AddComponent<Outline>();
+            outline.OutlineColor = outlineColor;
+            outline.OutlineWidth = outlineWidth;
+
+            foreach (GameObject go in disattivati)
+                go.SetActive(true);
         }
+
+        if (outline != null && outline.enabled != active)
+            outline.enabled = active;
     }
 }
 

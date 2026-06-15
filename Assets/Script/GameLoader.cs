@@ -3,24 +3,19 @@ using System.Collections;
 
 public class GameLoader : MonoBehaviour
 {
+    [Header("Fisica")]
+    [Tooltip("Quanti secondi di caduta simulare prima di mostrare la scena")]
+    public float secondiDaSimulare = 1.5f;
+
     void Start()
     {
-        // Non forzare il tempo a 1 se c'è un TutorialManager nella scena.
-        // Se non c'è il tutorial, allora ripristiniamo il tempo normale.
-        if (TutorialManager.Instance == null)
-        {
-            Time.timeScale = 1f;
-        }
-        else
-        {
-            Debug.Log("GameLoader: Il Tutorial è presente, lascio a lui la gestione del tempo.");
-        }
+        Time.timeScale = 1f;
 
-        // FORZIAMO il nero subito, prima ancora che il gioco disegni il primo frame
+        // FORZIAMO il nero subito
         if (FadeManager.Instance != null && FadeManager.Instance.fadePanel != null)
         {
             FadeManager.Instance.fadePanel.gameObject.SetActive(true);
-            FadeManager.Instance.fadePanel.color = new Color(0, 0, 0, 1); // Nero opaco al 100%
+            FadeManager.Instance.fadePanel.color = new Color(0, 0, 0, 1);
         }
 
         if (SaveManager.Instance != null && SaveManager.Instance.slotDaCaricare != -1)
@@ -29,25 +24,48 @@ public class GameLoader : MonoBehaviour
         }
         else
         {
-            if (FadeManager.Instance != null) FadeManager.Instance.StartFadeIn();
+            StartCoroutine(SimulaCadutaENuovaPartita());
         }
     }
 
+    // NUOVA PARTITA — fai cadere i rifiuti mentre è nero, poi fade in
+    private IEnumerator SimulaCadutaENuovaPartita()
+    {
+        yield return SimulaFisica();
+
+        if (FadeManager.Instance != null) FadeManager.Instance.StartFadeIn();
+    }
+
+    // CARICAMENTO SALVATAGGIO — carica i dati, poi simula la caduta (per i rifiuti rimasti), poi fade in
     private IEnumerator CaricaConRitardo()
     {
-        // Aspettiamo un attimo prima di caricare per dare tempo al sistema di inizializzare
         yield return new WaitForSeconds(0.1f);
 
         SaveManager.Instance.Carica(SaveManager.Instance.slotDaCaricare);
         SaveManager.Instance.slotDaCaricare = -1;
 
-        // Aspettiamo che il teletrasporto e il posizionamento siano completati
         yield return new WaitForSeconds(0.4f);
 
-        // Ora che tutto è al posto giusto, togliamo il nero
+        yield return SimulaFisica();
+
         if (FadeManager.Instance != null)
         {
             FadeManager.Instance.StartFadeIn();
         }
+    }
+
+    // Fa avanzare la fisica "a velocità accelerata" mentre lo schermo è nero
+    private IEnumerator SimulaFisica()
+    {
+        Physics.simulationMode = SimulationMode.Script;
+
+        float passi = secondiDaSimulare / Time.fixedDeltaTime;
+        for (int i = 0; i < passi; i++)
+        {
+            Physics.Simulate(Time.fixedDeltaTime);
+            yield return null; // lascia respirare un frame per non bloccare l'editor
+        }
+
+        Physics.simulationMode = SimulationMode.FixedUpdate;
     }
 }
