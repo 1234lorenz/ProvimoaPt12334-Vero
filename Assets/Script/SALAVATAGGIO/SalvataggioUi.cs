@@ -37,8 +37,7 @@ public class SalvataggioUI : MonoBehaviour
 
             // testo dello slot
             var testo = slotObj.GetComponentInChildren<TextMeshProUGUI>();
-            Debug.Log("Testo trovato: " + testo); //  aggiungi questa
-
+           
             if (SaveManager.Instance.SlotOccupato(slotIndex))
             {
                 SaveData data = SaveManager.Instance.LeggiSlot(slotIndex);

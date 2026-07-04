@@ -31,6 +31,10 @@ public class XPManager : MonoBehaviour
     public ZonaBloccata zonaBloccata2;
     public ZonaBloccata zonaBloccata3;
 
+    [Header("Pannello Vittoria")]
+    public GameObject vittoriaPanel;
+    public TextMeshProUGUI vittoriaText;
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -41,15 +45,19 @@ public class XPManager : MonoBehaviour
     {
         UpdateUI();
         levelUpPanel.SetActive(false);
+        if (vittoriaPanel != null)
+            vittoriaPanel.SetActive(false);
     }
+
     public void AggiornaUI()
     {
         UpdateUI();
     }
+
     public void AddXP(int amount)
     {
         currentXP += amount;
-        if (currentXP < 0) currentXP = 0; // non andare sotto zero
+        if (currentXP < 0) currentXP = 0;
         UpdateUI();
         CheckLevelUp();
     }
@@ -91,15 +99,59 @@ public class XPManager : MonoBehaviour
     private IEnumerator ShowLevelUp(int level)
     {
         levelUpPanel.SetActive(true);
-        levelUpText.text = level == 0 ? "Hai vinto! Spiaggia pulita!"
-                                      : $"Zona {level} sbloccata!";
+        levelUpText.text = $"Zona {level} sbloccata!";
         yield return new WaitForSeconds(3f);
         levelUpPanel.SetActive(false);
     }
 
     private void Win()
     {
-        StartCoroutine(ShowLevelUp(0));
+        StartCoroutine(ShowVittoria());
+    }
+
+    private IEnumerator ShowVittoria()
+    {
+        yield return new WaitForSeconds(1f);
+
+        if (vittoriaPanel != null)
+            vittoriaPanel.SetActive(true);
+
+        // calcola totale rifiuti smaltiti
+        int totaleRifiuti = MissionManager.Instance.plasticaSmaltite +
+                            MissionManager.Instance.organicoSmaltiti +
+                            MissionManager.Instance.cartaSmaltita +
+                            MissionManager.Instance.vetroSmaltito +
+                            MissionManager.Instance.metalloSmaltito;
+
+        if (vittoriaText != null)
+        {
+            vittoriaText.text =
+                $"Hai completato tutte le missioni!\n\n" +
+                $"Rifiuti smaltiti: {totaleRifiuti}\n" +
+                $"Punti Eco totali: {currentXP}\n\n" +
+                $"L'isola è più pulita grazie a te!\n" +
+                $"Puoi continuare a raccogliere altri rifiuti.";
+        }
+
+        // blocca il player
+        Time.timeScale = 0f;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    public void ContinuaAGiocare()
+    {
+        if (vittoriaPanel != null)
+            vittoriaPanel.SetActive(false);
+        Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    public void TornaAlMenuDaVittoria()
+    {
+        Time.timeScale = 1f;
+        FindObjectOfType<FadeManager>().FadeToScene("MenuPrincipale");
     }
 
     private void UpdateUI()

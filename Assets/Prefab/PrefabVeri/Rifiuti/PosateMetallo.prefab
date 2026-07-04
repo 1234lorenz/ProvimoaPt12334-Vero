@@ -308,7 +308,7 @@ MonoBehaviour:
   rifiutoID: 'Coltello '
   quantita: 1
   outlineColor: {r: 0, g: 1, b: 1, a: 1}
-  outlineWidth: 8.32
+  outlineWidth: 8.22
 --- !u!54 &1686362831020412449
 Rigidbody:
   m_ObjectHideFlags: 0

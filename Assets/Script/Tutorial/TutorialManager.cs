@@ -15,31 +15,29 @@ public class TutorialManager : MonoBehaviour
     public enum Fase { Intro, Movimento, CercaRifiuto, SpiegaRifiuto, Raccogli, ApriInventario, ApriMissioni, Finito }
     public Fase faseAttuale = Fase.Intro;
 
+    private FirstPersonController playerController;
+
     void Awake()
     {
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
+        playerController = FindObjectOfType<FirstPersonController>();
     }
 
     IEnumerator Start()
     {
         DisattivaTuttiIPannelli();
 
-        // 1. Stiamo caricando una partita?
         if (SaveManager.Instance != null && SaveManager.Instance.slotDaCaricare != -1)
         {
-            Debug.Log("TutorialManager: Sto aspettando che il GameLoader carichi il salvataggio...");
-
             yield return new WaitUntil(() => SaveManager.Instance.slotDaCaricare == -1);
             yield return new WaitForSeconds(0.1f);
         }
 
-        // 2. Controlliamo se il tutorial era già completato
         if (SaveManager.Instance != null && SaveManager.Instance.datiCaricati != null)
         {
             if (SaveManager.Instance.datiCaricati.tutorialCompleto)
             {
-                Debug.Log(" [TUTORIAL] Salvataggio rilevato con tutorial completato. Mi distruggo.");
                 faseAttuale = Fase.Finito;
                 BloccaGiocatore(false);
                 Destroy(gameObject);
@@ -47,7 +45,6 @@ public class TutorialManager : MonoBehaviour
             }
         }
 
-        // 3. Nuova partita o tutorial non completato
         AvviaFase(Fase.Intro);
     }
 
@@ -101,8 +98,7 @@ public class TutorialManager : MonoBehaviour
 
     private void BloccaGiocatore(bool blocca)
     {
-        var player = FindObjectOfType<FirstPersonController>();
-        if (player != null) player.enabled = !blocca;
+        if (playerController != null) playerController.enabled = !blocca;
 
         if (blocca)
         {

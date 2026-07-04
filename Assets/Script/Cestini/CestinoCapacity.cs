@@ -7,7 +7,7 @@ public class CestinoCapacity : MonoBehaviour
     [Header("Impostazioni")]
     public int maxCapacity;
     public int itemsPerSack;
-    public float distanzaInterazione = 4f;
+    public float distanzaInterazione = 10f; // Alzata per bilanciare la grandezza del cestino
 
     [Header("Riferimenti")]
     public GameObject sackPrefab;
@@ -21,7 +21,7 @@ public class CestinoCapacity : MonoBehaviour
 
     public int currentCount = 0;
     private bool isFull = false;
-    private bool isSvuotando = false; // NUOVO: Impedisce alla UI di glitchare durante lo smaltimento
+    private bool isSvuotando = false; // Impedisce alla UI di glitchare durante lo smaltimento
     private System.Collections.Generic.List<GameObject> sacks = new System.Collections.Generic.List<GameObject>();
     private Transform player;
     private Cestino cestino;
@@ -62,29 +62,25 @@ public class CestinoCapacity : MonoBehaviour
     {
         if (player == null) return;
 
-        // Se il cestino non è pieno, o se stiamo già facendo l'animazione di svuotamento,
-        // spegniamo la scritta (se attiva) e usciamo subito.
-        if (!isFull || isSvuotando)
-        {
-            if (fullMessage != null && fullMessage.gameObject.activeSelf)
-                fullMessage.gameObject.SetActive(false);
-            return;
-        }
+        // Se il cestino NON è pieno, o se stiamo già facendo l'animazione di svuotamento,
+        // fermiamo lo script per questo cestino. NON spegniamo la UI qui!
+        if (!isFull || isSvuotando) return;
 
-        // Controlliamo la distanza ogni frame per rendere l'interazione fluidissima
+        // Arrivati a questo punto, sappiamo che QUESTO cestino è pieno.
+        // Calcoliamo la distanza dal giocatore:
         float distanza = Vector3.Distance(transform.position, player.position);
 
         if (distanza <= distanzaInterazione)
         {
-            // Mostra la scritta solo se non è già visibile
-            if (fullMessage != null && !fullMessage.gameObject.activeSelf)
+            // Il giocatore è vicino: Accendiamo la scritta
+            if (fullMessage != null)
             {
                 fullMessage.gameObject.SetActive(true);
                 string tipo = (cestino != null) ? cestino.acceptedType.ToString() : "";
                 fullMessage.text = $"Cestino {tipo} pieno!\nPremi {smaltimentoKey} per smaltire";
             }
 
-            // ORA il tasto F risponde istantaneamente ad ogni singola pressione!
+            // Controlliamo il tasto F (ora è istantaneo!)
             if (Input.GetKeyDown(smaltimentoKey))
             {
                 StartCoroutine(Smaltimento());
@@ -92,21 +88,29 @@ public class CestinoCapacity : MonoBehaviour
         }
         else
         {
-            // Se il giocatore si allontana, spegne la scritta
+            // Il giocatore si è allontanato da questo cestino pieno. Spegniamo la scritta,
+            // ma solo se stava mostrando il messaggio di QUESTO tipo di cestino.
             if (fullMessage != null && fullMessage.gameObject.activeSelf)
-                fullMessage.gameObject.SetActive(false);
+            {
+                string tipo = (cestino != null) ? cestino.acceptedType.ToString() : "";
+                if (fullMessage.text.Contains(tipo))
+                {
+                    fullMessage.gameObject.SetActive(false);
+                }
+            }
         }
     }
 
     private IEnumerator Smaltimento()
     {
-        isSvuotando = true; // Blocca l'Update ed evita che la scritta si riaccenda
+        isSvuotando = true; // Blocca l'Update ed evita che la scritta si riaccenda per errore
 
         if (smaltimentoFX != null)
             smaltimentoFX.Play();
 
+        // Spegne definitivamente la scritta appena premiamo F
         if (fullMessage != null)
-            fullMessage.gameObject.SetActive(false); // Spegne definitivamente la scritta
+            fullMessage.gameObject.SetActive(false);
 
         yield return new WaitForSeconds(0.5f);
 
@@ -119,7 +123,7 @@ public class CestinoCapacity : MonoBehaviour
         currentCount = 0;
         isFull = false;
 
-        isSvuotando = false; // Sblocco finale: il cestino torna a funzionare normalmente
+        isSvuotando = false; // Il cestino è di nuovo pronto a ricevere rifiuti
     }
 
     public bool IsFull()
