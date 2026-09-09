@@ -97,7 +97,6 @@ public class CestinoUI : MonoBehaviour
             panelCestinoPromptQ.SetActive(false);
 
         playerController.enabled = false;
-        //Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
     }
@@ -207,11 +206,23 @@ public class CestinoUI : MonoBehaviour
 
         bool eraInEccesso = false;
 
-        if (MissionManager.Instance != null)
+        if (MissionManager.Instance != null && XPManager.Instance != null)
         {
             int mancanti = MissionManager.Instance.GetMancanti(selectedType);
 
-            if (mancanti > 0 && quantity > mancanti)
+            // NUOVO: Controlla se il rifiuto fa parte delle missioni del livello in cui ti trovi
+            bool missioneAttiva = false;
+            int lvl = XPManager.Instance.currentLevel;
+
+            if (lvl == 1 && (selectedType == RIFIUTIType.Plastica || selectedType == RIFIUTIType.Organico || selectedType == RIFIUTIType.Carta))
+                missioneAttiva = true;
+            else if (lvl == 2 && (selectedType == RIFIUTIType.Vetro || selectedType == RIFIUTIType.Metallo))
+                missioneAttiva = true;
+            else if (lvl == 3 && selectedType == RIFIUTIType.Secco)
+                missioneAttiva = true;
+
+            // Applica il limite (e mostra il messaggio in eccesso) SOLO se la missione è attiva in questo momento
+            if (missioneAttiva && mancanti > 0 && quantity > mancanti)
             {
                 quantity = mancanti;
                 eraInEccesso = true;
@@ -237,23 +248,17 @@ public class CestinoUI : MonoBehaviour
                 AggiornaSlotsUI();
             }
         }
-        // se success è false (cestino sbagliato), TryDeposit ha già fatto shake + penalità XP
-        // il pannello resta apertissimo così il giocatore può riprovare con il tipo giusto
     }
 
-    // COROUTINE MODIFICATA: Accende e spegne solo la tua UI di Unity
     private IEnumerator MostraMessaggioLimiteMissione()
     {
         quantityInput.interactable = false;
 
-        // 1. Accendiamo la scritta/pannello che hai personalizzato nell'editor
         if (messaggioLimiteUI != null)
             messaggioLimiteUI.SetActive(true);
 
-        // Aspettiamo i 2.5 secondi a tempo reale (anche se il gioco è in pausa)
         yield return new WaitForSecondsRealtime(2.5f);
 
-        // 2. Spegniamo la scritta personalizzata
         if (messaggioLimiteUI != null)
             messaggioLimiteUI.SetActive(false);
 

@@ -20,6 +20,8 @@ public class MissionManager : MonoBehaviour
     public int metalloTarget = 10;
 
     [Header("Missioni Livello 3")]
+    public int seccoSmaltito = 0;
+    public int seccoTarget = 10;
     public int cestiniSmaltiti = 0;
     public int cestiniTarget = 3;
 
@@ -32,6 +34,7 @@ public class MissionManager : MonoBehaviour
     public int xpBonusCarta = 25;
     public int xpBonusVetro = 40;
     public int xpBonusMetallo = 40;
+    public int xpBonusSecco = 50;
     public int xpBonusCestino = 60;
 
     // traccia missioni già completate per non dare bonus due volte
@@ -40,6 +43,7 @@ public class MissionManager : MonoBehaviour
     public bool cartaCompleta = false;
     public bool vetroCompleto = false;
     public bool metalloCompleto = false;
+    public bool seccoCompleto = false;
 
     [Header("UI Missioni")]
     public TextMeshProUGUI missionText;
@@ -60,7 +64,6 @@ public class MissionManager : MonoBehaviour
         UpdateMissionUI();
     }
 
-    // NUOVA FUNZIONE: Calcola quanti oggetti mancano per completare la missione di quella categoria
     public int GetMancanti(RIFIUTIType type)
     {
         switch (type)
@@ -70,16 +73,16 @@ public class MissionManager : MonoBehaviour
             case RIFIUTIType.Carta: return cartaCompleta ? 0 : Mathf.Max(0, cartaTarget - cartaSmaltita);
             case RIFIUTIType.Vetro: return vetroCompleto ? 0 : Mathf.Max(0, vetroTarget - vetroSmaltito);
             case RIFIUTIType.Metallo: return metalloCompleto ? 0 : Mathf.Max(0, metalloTarget - metalloSmaltito);
+            case RIFIUTIType.Secco: return seccoCompleto ? 0 : Mathf.Max(0, seccoTarget - seccoSmaltito);
+
             default: return 0;
         }
     }
 
     public void OnSmaltimento(RIFIUTIType type, int quantity)
     {
-        // XP progressivi per ogni oggetto
         XPManager.Instance.AddXP(xpPerOggetto * quantity);
 
-        // aggiorna contatori e controlla bonus
         switch (type)
         {
             case RIFIUTIType.Plastica:
@@ -88,7 +91,6 @@ public class MissionManager : MonoBehaviour
                 {
                     plasticaCompleta = true;
                     XPManager.Instance.AddXP(xpBonusPlastica);
-                    Debug.Log("Missione Plastica completata! Bonus Punti Eco!");
                 }
                 break;
 
@@ -98,7 +100,6 @@ public class MissionManager : MonoBehaviour
                 {
                     organicoCompleto = true;
                     XPManager.Instance.AddXP(xpBonusOrganico);
-                    Debug.Log("Missione Organico completata! Bonus Punti Eco!");
                 }
                 break;
 
@@ -108,7 +109,6 @@ public class MissionManager : MonoBehaviour
                 {
                     cartaCompleta = true;
                     XPManager.Instance.AddXP(xpBonusCarta);
-                    Debug.Log("Missione Carta completata! Bonus Punti Eco!");
                 }
                 break;
 
@@ -118,7 +118,6 @@ public class MissionManager : MonoBehaviour
                 {
                     vetroCompleto = true;
                     XPManager.Instance.AddXP(xpBonusVetro);
-                    Debug.Log("Missione Vetro completata! Bonus Punti Eco!");
                 }
                 break;
 
@@ -128,7 +127,15 @@ public class MissionManager : MonoBehaviour
                 {
                     metalloCompleto = true;
                     XPManager.Instance.AddXP(xpBonusMetallo);
-                    Debug.Log("Missione Metallo completata! Bonus Punti Eco!");
+                }
+                break;
+
+            case RIFIUTIType.Secco:
+                seccoSmaltito += quantity;
+                if (!seccoCompleto && seccoSmaltito >= seccoTarget)
+                {
+                    seccoCompleto = true;
+                    XPManager.Instance.AddXP(xpBonusSecco);
                 }
                 break;
         }
@@ -138,13 +145,20 @@ public class MissionManager : MonoBehaviour
 
     public void OnRaccolta()
     {
-        // raccolta non dà XP diretti — solo smaltimento
     }
 
     public void OnCestinoSmaltito()
     {
-        cestiniSmaltiti++;
-        XPManager.Instance.AddXP(xpBonusCestino);
+        // Determina il target massimo di cestini in base al livello attuale
+        int targetCestiniLivello = (XPManager.Instance.currentLevel == 2) ? 1 : cestiniTarget;
+
+        // Aumenta il conteggio e assegna XP SOLO se non abbiamo ancora raggiunto il target
+        if (cestiniSmaltiti < targetCestiniLivello)
+        {
+            cestiniSmaltiti++;
+            XPManager.Instance.AddXP(xpBonusCestino);
+        }
+
         UpdateMissionUI();
     }
 
@@ -160,15 +174,17 @@ public class MissionManager : MonoBehaviour
 
     public bool Level3Complete()
     {
-        return cestiniSmaltiti >= cestiniTarget;
+        return cestiniSmaltiti >= cestiniTarget && seccoCompleto;
     }
 
     public void ResetMissioni()
     {
         plasticaSmaltite = 0; organicoSmaltiti = 0; cartaSmaltita = 0;
-        vetroSmaltito = 0; metalloSmaltito = 0; cestiniSmaltiti = 0;
+        vetroSmaltito = 0; metalloSmaltito = 0; cestiniSmaltiti = 0; seccoSmaltito = 0;
+
         plasticaCompleta = false; organicoCompleto = false;
-        cartaCompleta = false; vetroCompleto = false; metalloCompleto = false;
+        cartaCompleta = false; vetroCompleto = false; metalloCompleto = false; seccoCompleto = false;
+
         UpdateMissionUI();
     }
 
@@ -178,7 +194,6 @@ public class MissionManager : MonoBehaviour
 
         if (XPManager.Instance.currentLevel == 1)
         {
-            //  MODIFICATO: Mathf.Min blocca la visualizzazione grafica al valore massimo del Target
             int plasticaVisualizzata = Mathf.Min(plasticaSmaltite, plasticaTarget);
             int organicoVisualizzato = Mathf.Min(organicoSmaltiti, organicoTarget);
             int cartaVisualizzata = Mathf.Min(cartaSmaltita, cartaTarget);
@@ -193,19 +208,23 @@ public class MissionManager : MonoBehaviour
         {
             int vetroVisualizzato = Mathf.Min(vetroSmaltito, vetroTarget);
             int metalloVisualizzato = Mathf.Min(metalloSmaltito, metalloTarget);
+            int cestiniVisualizzati = Mathf.Min(cestiniSmaltiti, 1); // Blocca graficamente a 1
 
             missionText.text =
                 $"Missioni Zona 2:\n" +
                 $"Vetro: {vetroVisualizzato}/{vetroTarget} {(vetroCompleto ? "[V]" : "")}\n" +
                 $"Metallo: {metalloVisualizzato}/{metalloTarget} {(metalloCompleto ? "[V]" : "")}\n" +
-                $"Cestini: {cestiniSmaltiti}/1";
+                $"Cestini: {cestiniVisualizzati}/1 {(cestiniSmaltiti >= 1 ? "[V]" : "")}";
         }
         else
         {
             int cestiniVisualizzati = Mathf.Min(cestiniSmaltiti, cestiniTarget);
+            int seccoVisualizzato = Mathf.Min(seccoSmaltito, seccoTarget);
+
             missionText.text =
                 $"Missioni Zona 3:\n" +
-                $"Cestini smaltiti: {cestiniVisualizzati}/{cestiniTarget}";
+                $"Secco: {seccoVisualizzato}/{seccoTarget} {(seccoCompleto ? "[V]" : "")}\n" +
+                $"Cestini smaltiti: {cestiniVisualizzati}/{cestiniTarget} {(cestiniSmaltiti >= cestiniTarget ? "[V]" : "")}";
         }
     }
 }

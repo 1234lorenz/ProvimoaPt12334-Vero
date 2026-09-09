@@ -13,12 +13,8 @@ public class XPManager : MonoBehaviour
 
     [Header("Punti Eco per salire di livello")]
     public int xpToLevel2 = 300;
-    public int xpToLevel3 = 800;
-    public int xpToWin = 1500;
-
-    [Header("Punti Eco per azione")]
-    public int xpRaccolta = 10;
-    public int xpSmaltimento = 30;
+    public int xpToLevel3 = 390;
+    public int xpToWin = 330;
 
     [Header("UI")]
     public TextMeshProUGUI levelText;
@@ -30,6 +26,7 @@ public class XPManager : MonoBehaviour
     [Header("Zone da sbloccare")]
     public ZonaBloccata zonaBloccata2;
     public ZonaBloccata zonaBloccata3;
+    public ZonaBloccata zonaBloccata3_2;
 
     [Header("Pannello Vittoria")]
     public GameObject vittoriaPanel;
@@ -44,9 +41,18 @@ public class XPManager : MonoBehaviour
     void Start()
     {
         UpdateUI();
-        levelUpPanel.SetActive(false);
-        if (vittoriaPanel != null)
-            vittoriaPanel.SetActive(false);
+        if (levelUpPanel != null) levelUpPanel.SetActive(false);
+        if (vittoriaPanel != null) vittoriaPanel.SetActive(false);
+
+        // Sblocco automatico cancelli per i test dai livelli avanzati
+        if (currentLevel >= 2 && zonaBloccata2 != null)
+            zonaBloccata2.Sblocca();
+
+        if (currentLevel >= 3)
+        {
+            if (zonaBloccata3 != null) zonaBloccata3.Sblocca();
+            if (zonaBloccata3_2 != null) zonaBloccata3_2.Sblocca();
+        }
     }
 
     public void AggiornaUI()
@@ -90,18 +96,25 @@ public class XPManager : MonoBehaviour
 
         if (newLevel == 2 && zonaBloccata2 != null)
             zonaBloccata2.Sblocca();
-        if (newLevel == 3 && zonaBloccata3 != null)
-            zonaBloccata3.Sblocca();
+
+        if (newLevel == 3)
+        {
+            if (zonaBloccata3 != null) zonaBloccata3.Sblocca();
+            if (zonaBloccata3_2 != null) zonaBloccata3_2.Sblocca();
+        }
 
         UpdateUI();
     }
 
     private IEnumerator ShowLevelUp(int level)
     {
-        levelUpPanel.SetActive(true);
-        levelUpText.text = $"Zona {level} sbloccata!";
-        yield return new WaitForSeconds(3f);
-        levelUpPanel.SetActive(false);
+        if (levelUpPanel != null)
+        {
+            levelUpPanel.SetActive(true);
+            if (levelUpText != null) levelUpText.text = $"Zona {level} sbloccata!";
+            yield return new WaitForSeconds(3f);
+            levelUpPanel.SetActive(false);
+        }
     }
 
     private void Win()
@@ -116,12 +129,12 @@ public class XPManager : MonoBehaviour
         if (vittoriaPanel != null)
             vittoriaPanel.SetActive(true);
 
-        // calcola totale rifiuti smaltiti
         int totaleRifiuti = MissionManager.Instance.plasticaSmaltite +
                             MissionManager.Instance.organicoSmaltiti +
                             MissionManager.Instance.cartaSmaltita +
                             MissionManager.Instance.vetroSmaltito +
-                            MissionManager.Instance.metalloSmaltito;
+                            MissionManager.Instance.metalloSmaltito +
+                            MissionManager.Instance.seccoSmaltito;
 
         if (vittoriaText != null)
         {
@@ -133,7 +146,6 @@ public class XPManager : MonoBehaviour
                 $"Puoi continuare a raccogliere altri rifiuti.";
         }
 
-        // blocca il player
         Time.timeScale = 0f;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
@@ -159,20 +171,18 @@ public class XPManager : MonoBehaviour
         if (levelText != null)
             levelText.text = $"Livello {currentLevel}";
 
+        int xpNext = currentLevel == 1 ? xpToLevel2 :
+                     currentLevel == 2 ? xpToLevel3 : xpToWin;
+
         if (xpText != null)
         {
-            int xpNext = currentLevel == 1 ? xpToLevel2 :
-                         currentLevel == 2 ? xpToLevel3 : xpToWin;
             xpText.text = $"{currentXP}/{xpNext} Punti Eco";
         }
 
-        if (xpSlider != null)
+        // CORREZIONE: Calcolo diretto e pulito del progresso percentuale
+        if (xpSlider != null && xpNext > 0)
         {
-            int xpPrev = currentLevel == 1 ? 0 :
-                         currentLevel == 2 ? xpToLevel2 : xpToLevel3;
-            int xpNext = currentLevel == 1 ? xpToLevel2 :
-                         currentLevel == 2 ? xpToLevel3 : xpToWin;
-            xpSlider.value = (float)(currentXP - xpPrev) / (xpNext - xpPrev);
+            xpSlider.value = (float)currentXP / xpNext;
         }
     }
 }
