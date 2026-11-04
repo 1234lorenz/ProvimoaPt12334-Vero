@@ -11,8 +11,10 @@ public class SaveManager : MonoBehaviour
     private const int NUM_SLOTS = 6;
     public int slotDaCaricare = -1;
 
-    // Supporto per far leggere lo stato del tutorial al TutorialManager
     [HideInInspector] public SaveData datiCaricati;
+
+    // seed dei rifiuti della partita in corso: lo imposta GeneratoreZona
+    [HideInInspector] public int seedRifiuti;
 
     void Awake()
     {
@@ -26,16 +28,13 @@ public class SaveManager : MonoBehaviour
         savePath = Application.persistentDataPath + "/save";
     }
 
-    // salva nello slot scelto
     public void Salva(int slot)
     {
         SaveData data = new SaveData();
 
-        // XP e livello
         data.currentXP = XPManager.Instance.currentXP;
         data.currentLevel = XPManager.Instance.currentLevel;
 
-        // Missioni
         data.plasticaSmaltite = MissionManager.Instance.plasticaSmaltite;
         data.organicoSmaltiti = MissionManager.Instance.organicoSmaltiti;
         data.cartaSmaltita = MissionManager.Instance.cartaSmaltita;
@@ -47,23 +46,20 @@ public class SaveManager : MonoBehaviour
         data.vetroCompleto = MissionManager.Instance.vetroCompleto;
         data.metalloCompleto = MissionManager.Instance.metalloCompleto;
         data.cestiniSmaltiti = MissionManager.Instance.cestiniSmaltiti;
+        data.seccoSmaltito = MissionManager.Instance.seccoSmaltito;
+        data.seccoCompleto = MissionManager.Instance.seccoCompleto;
 
-        // Salva lo stato del tutorial attuale!
         if (TutorialManager.Instance != null)
         {
             data.tutorialCompleto = (TutorialManager.Instance.faseAttuale == TutorialManager.Fase.Finito);
         }
         else
         {
-            // Se il TutorialManager non esiste più nella scena, significa che è già stato completato e distrutto
             data.tutorialCompleto = true;
         }
 
-        // Rifiuti raccolti (rimossi dal mondo)
         data.rifiutiRaccolti = RifiutiManager.Instance.GetRifiutiRaccolti();
-        Debug.Log("Rifiuti raccolti salvati: " + data.rifiutiRaccolti.Count);
 
-        // Posizione player
         GameObject player = GameObject.FindWithTag("Player");
         if (player != null)
         {
@@ -72,7 +68,6 @@ public class SaveManager : MonoBehaviour
             data.playerZ = player.transform.position.z;
         }
 
-        // NUOVO: Salva lo stato attuale degli oggetti dentro lo zaino
         CounterMenagerRifiuti counter = FindObjectOfType<CounterMenagerRifiuti>();
         if (counter != null)
         {
@@ -83,20 +78,26 @@ public class SaveManager : MonoBehaviour
             }
         }
 
-        // Info dello slot
+        // SEED dei rifiuti: serve a rigenerare la stessa mappa quando carichi
+        data.seedRifiuti = seedRifiuti;
+
+        // BARRIERE CON MINIGIOCO: salviamo i nomi di quelle gia' sbloccate
+        data.barriereSbloccate = new List<string>();
+        foreach (var gate in FindObjectsOfType<GateMinigameTrigger>(true))
+        {
+            if (gate.IsUnlocked) data.barriereSbloccate.Add(gate.GateId);
+        }
+
         data.dataOra = System.DateTime.Now.ToString("dd/MM/yyyy HH:mm");
         data.slotOccupato = true;
 
-        // Scrittura effettiva del file
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(savePath + slot + ".dat");
         bf.Serialize(file, data);
         file.Close();
-
         Debug.Log($"Salvato nello slot {slot}!");
     }
 
-    // carica dallo slot scelto
     public void Carica(int slot)
     {
         string path = savePath + slot + ".dat";
@@ -107,14 +108,13 @@ public class SaveManager : MonoBehaviour
         SaveData data = (SaveData)bf.Deserialize(file);
         file.Close();
 
-        // Teniamo traccia dei dati appena letti in memoria
         datiCaricati = data;
 
-        // applica XP e livello
+        // 1. CARICHIAMO LIVELLO E XP
         XPManager.Instance.currentXP = data.currentXP;
         XPManager.Instance.currentLevel = data.currentLevel;
 
-        // applica missioni
+        // 2. CARICHIAMO TUTTE LE MISSIONI PRIMA DI OGNI ALTRA COSA
         MissionManager.Instance.plasticaSmaltite = data.plasticaSmaltite;
         MissionManager.Instance.organicoSmaltiti = data.organicoSmaltiti;
         MissionManager.Instance.cartaSmaltita = data.cartaSmaltita;
@@ -126,8 +126,13 @@ public class SaveManager : MonoBehaviour
         MissionManager.Instance.vetroCompleto = data.vetroCompleto;
         MissionManager.Instance.metalloCompleto = data.metalloCompleto;
         MissionManager.Instance.cestiniSmaltiti = data.cestiniSmaltiti;
+        MissionManager.Instance.seccoSmaltito = data.seccoSmaltito;
+        MissionManager.Instance.seccoCompleto = data.seccoCompleto;
 
-        // --- APPLICAZIONE DEL NUOVO METODO DI TELETRASPORTO ---
+        // 3. ORA APPLICHIAMO IL LIVELLO (Così XPManager legge che le missioni sono complete e imposta giocoFinito = true)
+        XPManager.Instance.ApplicaLivelloCaricato();
+        MissionManager.Instance.AggiornaMissioniUI();
+
         GameObject player = GameObject.FindWithTag("Player");
         if (player != null)
         {
@@ -144,7 +149,6 @@ public class SaveManager : MonoBehaviour
             }
         }
 
-        // NUOVO: Ripristina i rifiuti che avevi dentro lo zaino e aggiorna la grafica UI
         CounterMenagerRifiuti counter = FindObjectOfType<CounterMenagerRifiuti>();
         if (counter != null && data.quantitaZaino != null)
         {
@@ -155,9 +159,16 @@ public class SaveManager : MonoBehaviour
             counter.AggiornaTuttoUI();
         }
 
-        // Applica la scomparsa dei vecchi rifiuti dal mondo di gioco
-        Debug.Log("Rifiuti raccolti caricati: " + data.rifiutiRaccolti.Count);
         RifiutiManager.Instance.ApplicaRifiutiRaccolti(data.rifiutiRaccolti);
+
+        // BARRIERE CON MINIGIOCO: nei salvataggi vecchi la lista non esiste (e' null)
+        if (data.barriereSbloccate != null)
+        {
+            foreach (var gate in FindObjectsOfType<GateMinigameTrigger>(true))
+            {
+                if (data.barriereSbloccate.Contains(gate.GateId)) gate.ForceUnlock();
+            }
+        }
 
         Debug.Log($"Caricato slot {slot}!");
     }
@@ -165,11 +176,7 @@ public class SaveManager : MonoBehaviour
     public void Elimina(int slot)
     {
         string path = savePath + slot + ".dat";
-        if (File.Exists(path))
-        {
-            File.Delete(path);
-            Debug.Log($"Slot {slot} eliminato!");
-        }
+        if (File.Exists(path)) File.Delete(path);
     }
 
     public bool SlotOccupato(int slot)

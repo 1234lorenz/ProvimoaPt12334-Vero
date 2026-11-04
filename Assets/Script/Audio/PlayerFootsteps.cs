@@ -4,7 +4,7 @@ public class PlayerFootsteps : MonoBehaviour
 {
     [Header("Configurazione Passi")]
     public float tempoTraPassiCamminata = 0.5f;
-    public float tempoTraPassiCorsa = 0.3f;
+    public float tempoTraPassiCorsa = 0.4f;
     public float sogliaMovimento = 0.1f;
     public float distanzaDalSuolo = 1.3f;
 

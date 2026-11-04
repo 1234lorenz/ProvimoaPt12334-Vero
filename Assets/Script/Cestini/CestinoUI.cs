@@ -15,7 +15,7 @@ public class CestinoUI : MonoBehaviour
 
     [Header("Messaggio Personalizzato Unity")]
     [Tooltip("Trascina qui la scritta o il pannello personalizzato che hai creato su Unity")]
-    public GameObject messaggioLimiteUI; // <-- AGGIUNTO: Il tuo oggetto grafico di Unity
+    public GameObject messaggioLimiteUI; 
 
     [Header("Prompt Interazione Cestino")]
     public GameObject panelCestinoPromptQ;

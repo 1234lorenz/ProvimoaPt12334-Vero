@@ -32,6 +32,9 @@ public class XPManager : MonoBehaviour
     public GameObject vittoriaPanel;
     public TextMeshProUGUI vittoriaText;
 
+    // Traccia se la storia è stata già completata per evitare di riaprire il pannello
+    [HideInInspector] public bool giocoFinito = false;
+
     private void Awake()
     {
         if (Instance == null) Instance = this;
@@ -55,6 +58,28 @@ public class XPManager : MonoBehaviour
         }
     }
 
+    public void ApplicaLivelloCaricato()
+    {
+        UpdateUI();
+
+        if (currentLevel >= 2 && zonaBloccata2 != null)
+        {
+            zonaBloccata2.Sblocca();
+        }
+
+        if (currentLevel >= 3)
+        {
+            if (zonaBloccata3 != null) zonaBloccata3.Sblocca();
+            if (zonaBloccata3_2 != null) zonaBloccata3_2.Sblocca();
+
+            // Riconosce se il gioco era già stato vinto nel salvataggio caricato
+            if (currentXP >= xpToWin && MissionManager.Instance.Level3Complete())
+            {
+                giocoFinito = true;
+            }
+        }
+    }
+
     public void AggiornaUI()
     {
         UpdateUI();
@@ -64,12 +89,30 @@ public class XPManager : MonoBehaviour
     {
         currentXP += amount;
         if (currentXP < 0) currentXP = 0;
+
+        // Blocco dei Punti Eco alla soglia target se le missioni della zona non sono ancora complete
+        if (currentLevel == 1 && !MissionManager.Instance.Level1Complete() && currentXP > xpToLevel2)
+        {
+            currentXP = xpToLevel2;
+        }
+        else if (currentLevel == 2 && !MissionManager.Instance.Level2Complete() && currentXP > xpToLevel3)
+        {
+            currentXP = xpToLevel3;
+        }
+        else if (currentLevel == 3 && !MissionManager.Instance.Level3Complete() && currentXP > xpToWin)
+        {
+            currentXP = xpToWin;
+        }
+
         UpdateUI();
         CheckLevelUp();
     }
 
     private void CheckLevelUp()
     {
+        // Se la vittoria è già stata mostrata/registrata, non riaprire mai più la finestra
+        if (giocoFinito) return;
+
         if (currentLevel == 1 && currentXP >= xpToLevel2)
         {
             if (MissionManager.Instance.Level1Complete())
@@ -83,7 +126,10 @@ public class XPManager : MonoBehaviour
         else if (currentLevel == 3 && currentXP >= xpToWin)
         {
             if (MissionManager.Instance.Level3Complete())
+            {
+                giocoFinito = true;
                 Win();
+            }
         }
     }
 
@@ -158,6 +204,9 @@ public class XPManager : MonoBehaviour
         Time.timeScale = 1f;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        // Aggiorna l'interfaccia delle missioni nascondendola a fine gioco
+        MissionManager.Instance.AggiornaMissioniUI();
     }
 
     public void TornaAlMenuDaVittoria()
@@ -179,7 +228,6 @@ public class XPManager : MonoBehaviour
             xpText.text = $"{currentXP}/{xpNext} Punti Eco";
         }
 
-        // CORREZIONE: Calcolo diretto e pulito del progresso percentuale
         if (xpSlider != null && xpNext > 0)
         {
             xpSlider.value = (float)currentXP / xpNext;

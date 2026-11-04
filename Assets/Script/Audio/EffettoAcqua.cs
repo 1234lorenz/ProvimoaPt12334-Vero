@@ -7,7 +7,7 @@ public class EffettoAcqua : MonoBehaviour
 
     [Header("Nebbia di Sfondo (Subacquea)")]
     [SerializeField] private Color coloreNebbiaSubacquea = new Color(0f, 0.2f, 0.4f); // Blu scuro per l'orizzonte
-    [SerializeField] private float distanzaFineNebbia; // Più è bassa, meno si vede la mappa in lontananza
+    [SerializeField] private float distanzaFineNebbia = 35f; // Distanza di visibilità in acqua
 
     private bool nebbiaIniziale;
     private Color coloreNebbiaIniziale;
@@ -16,76 +16,71 @@ public class EffettoAcqua : MonoBehaviour
 
     void Start()
     {
-        // Salviamo la nebbia originale del mondo
-        nebbiaIniziale = RenderSettings.fog;
+        // Forziamo la nebbia a SPENTA all'avvio del gioco (così la mappa è limpida)
+        RenderSettings.fog = false;
+        nebbiaIniziale = false;
+
+        // Salviamo i valori di default
         coloreNebbiaIniziale = RenderSettings.fogColor;
         fineNebbiaIniziale = RenderSettings.fogEndDistance;
         modalitaNebbiaIniziale = RenderSettings.fogMode;
 
-        // Spegniamo l'effetto ovattato all'avvio del gioco (se presente sulla telecamera)
-        if (Camera.main != null)
-        {
-            AudioLowPassFilter filtro = Camera.main.GetComponent<AudioLowPassFilter>();
-            if (filtro != null)
-            {
-                filtro.enabled = false;
-            }
-        }
+        // Spegniamo l'effetto audio ovattato all'avvio
+        ImpostaFiltroAudio(false);
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        // Controlliamo se chi entra è il Player o un suo oggetto figlio
+        if (other.CompareTag("Player") || other.transform.root.CompareTag("Player"))
         {
-            FirstPersonController player = other.GetComponent<FirstPersonController>();
+            FirstPersonController player = other.GetComponentInParent<FirstPersonController>();
             if (player != null)
             {
                 player.moltiplicatoreVelocita = lentezzaInAcqua;
 
-                // Attiva la nebbia per nascondere la mappa 
+                // Attiva la nebbia subacquea
                 RenderSettings.fog = true;
                 RenderSettings.fogMode = FogMode.Linear;
                 RenderSettings.fogColor = coloreNebbiaSubacquea;
                 RenderSettings.fogStartDistance = 0f;
                 RenderSettings.fogEndDistance = distanzaFineNebbia;
 
-                // --- NOVITÀ: ATTIVA L'EFFETTO AUDIO OVATTATO ---
-                if (Camera.main != null)
-                {
-                    AudioLowPassFilter filtro = Camera.main.GetComponent<AudioLowPassFilter>();
-                    if (filtro != null)
-                    {
-                        filtro.enabled = true; // Accende il filtro sott'acqua
-                    }
-                }
+                // Attiva audio ovattato
+                ImpostaFiltroAudio(true);
             }
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") || other.transform.root.CompareTag("Player"))
         {
-            FirstPersonController player = other.GetComponent<FirstPersonController>();
+            FirstPersonController player = other.GetComponentInParent<FirstPersonController>();
             if (player != null)
             {
                 player.moltiplicatoreVelocita = 1f;
 
-                // Ripristina il cielo e la visuale normale della mappa
+                // Ripristina le impostazioni iniziali del mondo
                 RenderSettings.fog = nebbiaIniziale;
                 RenderSettings.fogColor = coloreNebbiaIniziale;
                 RenderSettings.fogEndDistance = fineNebbiaIniziale;
                 RenderSettings.fogMode = modalitaNebbiaIniziale;
 
-                // --- NOVITÀ: DISATTIVA L'EFFETTO AUDIO OVATTATO ---
-                if (Camera.main != null)
-                {
-                    AudioLowPassFilter filtro = Camera.main.GetComponent<AudioLowPassFilter>();
-                    if (filtro != null)
-                    {
-                        filtro.enabled = false; // Spegne il filtro, torna l'audio normale
-                    }
-                }
+                // Disattiva audio ovattato
+                ImpostaFiltroAudio(false);
+            }
+        }
+    }
+
+    private void ImpostaFiltroAudio(bool attivo)
+    {
+        if (Camera.main != null)
+        {
+            AudioLowPassFilter filtro = Camera.main.GetComponent<AudioLowPassFilter>();
+            if (filtro != null)
+            {
+                filtro.enabled = attivo;
             }
         }
     }

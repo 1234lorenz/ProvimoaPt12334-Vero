@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 [Serializable]
 public class SaveData
@@ -24,9 +25,16 @@ public class SaveData
     public float playerZ;
     public string dataOra;
     public bool slotOccupato;
-    public bool tutorialCompleto = false; 
+    public bool tutorialCompleto = false;
 
     // lista ID rifiuti raccolti
     public List<string> rifiutiRaccolti = new List<string>();
     public List<int> quantitaZaino = new List<int>();
+
+    // nomi delle barriere con minigioco gia' sbloccate
+    // [OptionalField] serve perche' i salvataggi vecchi non hanno questo campo
+    [OptionalField] public List<string> barriereSbloccate = new List<string>();
+
+    // seed con cui sono stati generati i rifiuti: serve a rigenerare la stessa mappa
+    [OptionalField] public int seedRifiuti;
 }

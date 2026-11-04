@@ -28,7 +28,7 @@ public class MenuManager : MonoBehaviour
         fadeManager.FadeToScene("SampleScene");
     }
 
-    // --- NUOVA FUNZIONE PER I BOTTONI "CARICA" DEL MENU ---
+    
     public void CaricaSlot(int numeroSlot)
     {
         Time.timeScale = 1f;

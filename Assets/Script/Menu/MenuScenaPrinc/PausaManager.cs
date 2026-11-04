@@ -43,7 +43,8 @@ public class PausaManager : MonoBehaviour
 
     void Update()
     {
-        if (!canPause) return; //  blocca la pausa all'avvio
+        if (!canPause) return; // blocca la pausa all'avvio
+        if (MinigameBase.AnyRunning) return; // durante i minigiochi Esc non fa niente
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {

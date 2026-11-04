@@ -39,6 +39,7 @@ public class FirstPersonController : MonoBehaviour
 
     [Header("UI Element")]
     public GameObject UiPanelCancello_apri;
+    public TextMeshProUGUI testoCancelloUI; // Riferimento al testo del pannello
 
     [Header("AnimationCancello (Automatico)")]
     public Animator gateAnimator;
@@ -51,12 +52,20 @@ public class FirstPersonController : MonoBehaviour
 
         UpdateCameraState();
 
-        //Cinemachine.CinemachineCore.Instance.OnTargetObjectWarped(transform, Vector3.zero);
-        UiPanelCancello_apri.SetActive(false);
+        if (UiPanelCancello_apri != null)
+        {
+            UiPanelCancello_apri.SetActive(false);
+            // Ricerca automatica del componente TextMeshPro se non assegnato a mano
+            if (testoCancelloUI == null)
+            {
+                testoCancelloUI = UiPanelCancello_apri.GetComponentInChildren<TextMeshProUGUI>();
+            }
+        }
     }
 
     void Update()
     {
+        if (MinigameBase.AnyRunning) return;
         if (Input.GetKeyDown(KeyCode.V))
         {
             isFirstPerson = !isFirstPerson;
@@ -72,7 +81,7 @@ public class FirstPersonController : MonoBehaviour
             HandleThirdPersonLogic();
         }
 
-        // GESTIONE INTEGRATA DEL SUONO SULLA PRESSIONE DEL TASTO T
+        // GESTIONE INTEGRATA DEL SUONO E DEL TESTO SULLA PRESSIONE DEL TASTO T
         if (Input.GetKeyDown(KeyCode.T) && gateAnimator != null)
         {
             bool state = gateAnimator.GetBool("isOpen");
@@ -80,6 +89,9 @@ public class FirstPersonController : MonoBehaviour
             // Invertiamo lo stato logico (se era aperto ora si chiude, e viceversa)
             bool nuovoStato = !state;
             gateAnimator.SetBool("isOpen", nuovoStato);
+
+            // Aggiorna subito la scritta a schermo
+            AggiornaTestoCancello();
 
             // Richiamo dei suoni in base alla nuova direzione dell'animazione
             if (AudioManager.Instance != null)
@@ -104,7 +116,7 @@ public class FirstPersonController : MonoBehaviour
 
     private void HandleJumping()
     {
-        animator.SetBool("isGrounded", characterController.isGrounded);
+        if (animator != null) animator.SetBool("isGrounded", characterController.isGrounded);
 
         if (characterController.isGrounded)
         {
@@ -113,7 +125,7 @@ public class FirstPersonController : MonoBehaviour
             if (playerInputHandler.JumpTrigger)
             {
                 currentMovement.y = JumpForce;
-                animator.SetTrigger("Jump");
+                if (animator != null) animator.SetTrigger("Jump");
             }
         }
         else
@@ -124,7 +136,6 @@ public class FirstPersonController : MonoBehaviour
 
     private void HandleThirdPersonLogic()
     {
-        // Se il gioco è congelato, blocca la visuale e il movimento
         if (Time.timeScale == 0f) return;
 
         Vector3 camForward = mainCamera.transform.forward;
@@ -144,7 +155,7 @@ public class FirstPersonController : MonoBehaviour
 
         float targetSpeed = worldDirection.sqrMagnitude > 0.01f ? (playerInputHandler.SprintTrigger ? 2f : 1f) : 0f;
         currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.deltaTime * 10f);
-        animator.SetFloat("Speed", currentSpeed);
+        if (animator != null) animator.SetFloat("Speed", currentSpeed);
 
         characterController.Move(currentMovement * Time.deltaTime);
 
@@ -157,7 +168,6 @@ public class FirstPersonController : MonoBehaviour
 
     private void HandleFirstPersonLogic()
     {
-        // Se il gioco è congelato, blocca la visuale e il movimento
         if (Time.timeScale == 0f) return;
 
         float mouseXRotation = playerInputHandler.RotationInput.x * mouseSesitivity;
@@ -182,7 +192,7 @@ public class FirstPersonController : MonoBehaviour
 
         float targetSpeed = moveDirection.sqrMagnitude > 0.01f ? (playerInputHandler.SprintTrigger ? 2f : 1f) : 0f;
         currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, Time.deltaTime * 10f);
-        animator.SetFloat("Speed", currentSpeed);
+        if (animator != null) animator.SetFloat("Speed", currentSpeed);
 
         characterController.Move(currentMovement * Time.deltaTime);
     }
@@ -196,12 +206,36 @@ public class FirstPersonController : MonoBehaviour
         characterController.enabled = true;
     }
 
+    private void AggiornaTestoCancello()
+    {
+        // Se non è stato assegnato a mano nell'Inspector, lo cerca automaticamente nel pannello UI
+        if (testoCancelloUI == null && UiPanelCancello_apri != null)
+        {
+            testoCancelloUI = UiPanelCancello_apri.GetComponentInChildren<TextMeshProUGUI>();
+        }
+
+        if (testoCancelloUI == null || gateAnimator == null) return;
+
+        bool isOpen = gateAnimator.GetBool("isOpen");
+        if (isOpen)
+        {
+            testoCancelloUI.text = "Premi [T] per chiudere";
+        }
+        else
+        {
+            testoCancelloUI.text = "Premi [T] per aprire";
+        }
+    }
+
     public void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Cancello"))
         {
-            UiPanelCancello_apri.SetActive(true);
             gateAnimator = other.GetComponentInParent<Animator>();
+            if (UiPanelCancello_apri != null) UiPanelCancello_apri.SetActive(true);
+
+            // Imposta il testo corretto appena ci si avvicina al cancello
+            AggiornaTestoCancello();
         }
     }
 
@@ -209,7 +243,7 @@ public class FirstPersonController : MonoBehaviour
     {
         if (other.CompareTag("Cancello"))
         {
-            UiPanelCancello_apri.SetActive(false);
+            if (UiPanelCancello_apri != null) UiPanelCancello_apri.SetActive(false);
             gateAnimator = null;
         }
     }

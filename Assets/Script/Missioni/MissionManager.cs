@@ -192,6 +192,28 @@ public class MissionManager : MonoBehaviour
     {
         if (missionText == null) return;
 
+        // Verifichiamo se il gioco è stato completato
+        bool giocoFinito = XPManager.Instance.currentLevel >= 3 &&
+                           Level3Complete() &&
+                           XPManager.Instance.currentXP >= XPManager.Instance.xpToWin;
+
+        // SE IL GIOCO E' FINITO: nascondiamo tutto definitivamente
+        if (giocoFinito)
+        {
+            missionText.text = "";
+            missionText.gameObject.SetActive(false);
+
+            if (missionText.transform.parent != null && missionText.transform.parent.GetComponent<UnityEngine.UI.Image>() != null)
+            {
+                missionText.transform.parent.gameObject.SetActive(false);
+            }
+            return;
+        }
+
+        // SE IL GIOCO NON E' FINITO: 
+        // Aggiorniamo SOLO i testi. Non usiamo "SetActive(true)", 
+        // così la visibilità del pannello rimane controllata solo dal tuo tasto M!
+
         if (XPManager.Instance.currentLevel == 1)
         {
             int plasticaVisualizzata = Mathf.Min(plasticaSmaltite, plasticaTarget);
@@ -208,7 +230,7 @@ public class MissionManager : MonoBehaviour
         {
             int vetroVisualizzato = Mathf.Min(vetroSmaltito, vetroTarget);
             int metalloVisualizzato = Mathf.Min(metalloSmaltito, metalloTarget);
-            int cestiniVisualizzati = Mathf.Min(cestiniSmaltiti, 1); // Blocca graficamente a 1
+            int cestiniVisualizzati = Mathf.Min(cestiniSmaltiti, 1);
 
             missionText.text =
                 $"Missioni Zona 2:\n" +

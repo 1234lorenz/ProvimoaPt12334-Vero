@@ -76,7 +76,7 @@ public class Collector : MonoBehaviour
 
             panelCestinoPrompt.SetActive(true);
             cestinoPromptUI.SetActive(true);
-            cestinoPromptText.text = $"      [Q]\nButta rifiuti";
+            cestinoPromptText.text = $"       [Q]\nButta rifiuti";
         }
         else
         {
