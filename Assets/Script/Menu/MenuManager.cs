@@ -39,7 +39,7 @@ public class MenuManager : MonoBehaviour
             SaveManager.Instance.slotDaCaricare = numeroSlot;
         }
 
-        // 2. Avviamo il caricamento con il FADE (schermo nero), esattamente come quando fai "Gioca"
+        // 2. Avviamo il caricamento con il FADE (schermo nero)
         if (fadeManager != null)
         {
             fadeManager.FadeToScene("SampleScene");

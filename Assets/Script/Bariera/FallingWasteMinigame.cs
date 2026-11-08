@@ -15,7 +15,7 @@ public class WasteItem
     public Color tint = Color.white;  // se non hai lo sprite viene usato questo colore
 }
 
-// Minigioco 2D: i rifiuti cadono, muovi il cestino col mouse e prendi SOLO quelli della categoria richiesta.
+
 public class FallingWasteMinigame : MinigameBase
 {
     [Header("Riferimenti UI")]

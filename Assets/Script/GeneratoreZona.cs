@@ -41,7 +41,6 @@ public class GeneratoreZona : MonoBehaviour
         Spargi(false);
     }
 
-    // Ho aggiunto un parametro "svuotaPrima". 
     // Se premiamo a mano nell'editor svuota la zona, all'avvio del gioco no (per sicurezza).
     [ContextMenu("Genera Rifiuti In Questa Zona")]
     public void SpargiEditor()
@@ -100,7 +99,7 @@ public class GeneratoreZona : MonoBehaviour
                 if (scriptRifiuto != null)
                     scriptRifiuto.rifiutoID = gameObject.name + "_" + i;
 
-                // 2. MAGIA DELLA FISICA EXTRA: Diamo una spinta reale al Rigidbody se presente
+                
                 Rigidbody rb = rifiuto.GetComponent<Rigidbody>();
                 if (rb != null)
                 {
@@ -120,7 +119,7 @@ public class GeneratoreZona : MonoBehaviour
             }
         }
 
-        Debug.Log("Fatto! Generati " + generati + " oggetti con fisica ultra-caotica in questa zona.");
+        Debug.Log("Fatto! Generati " + generati + " oggetti con fisica ultra-caotica in questa zona.");//debug di cobtrollo
     }
 
     // Numero casuale tra min e max, ma ripetibile

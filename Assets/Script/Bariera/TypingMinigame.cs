@@ -15,7 +15,7 @@ public class WasteWord
     public string[] acceptedAnswers;
 }
 
-// Minigioco 2D: compare l'icona di un rifiuto e devi scriverne il nome (Invio per confermare).
+
 // Giusto = un punto, sbagliato o tempo scaduto = una vita in meno.
 public class TypingMinigame : MinigameBase
 {
@@ -119,7 +119,6 @@ public class TypingMinigame : MinigameBase
         StartCoroutine(FocusInput());
     }
 
-    // Mescola i rifiuti cosi' non si ripetono finche' non li hai visti tutti.
     void BuildOrder()
     {
         var list = new List<int>();

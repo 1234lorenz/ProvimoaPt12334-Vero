@@ -11,7 +11,7 @@ public class SortBin
     public WasteCategory category;    // che rifiuti accetta
 }
 
-// Minigioco 2D: i rifiuti scorrono su un nastro, trascinali col mouse nel cestino giusto.
+
 // Usa WasteItem e WasteCategory definiti in FallingWasteMinigame.cs.
 public class ConveyorSortMinigame : MinigameBase
 {

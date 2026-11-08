@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 // Va su un oggetto vuoto con uno Sphere/Box Collider "Is Trigger" PIU' GRANDE della barriera
-// (non figlio della barriera). Quando il Player entra parte un minigioco a caso.
+
 // Se vinci la barriera si rimpicciolisce e sparisce, se perdi puoi riprovare uscendo e rientrando.
 public class GateMinigameTrigger : MonoBehaviour
 {

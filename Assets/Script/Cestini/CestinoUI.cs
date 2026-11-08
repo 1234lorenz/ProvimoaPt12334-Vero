@@ -210,7 +210,7 @@ public class CestinoUI : MonoBehaviour
         {
             int mancanti = MissionManager.Instance.GetMancanti(selectedType);
 
-            // NUOVO: Controlla se il rifiuto fa parte delle missioni del livello in cui ti trovi
+            // Controlla se il rifiuto fa parte delle missioni del livello in cui ti trovi
             bool missioneAttiva = false;
             int lvl = XPManager.Instance.currentLevel;
 
